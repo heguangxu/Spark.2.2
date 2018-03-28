@@ -100,6 +100,21 @@ private[streaming] class BlockGenerator(
   }
   import GeneratorState._
 
+  /**
+    * 优化：spark.streaming.blockInterval
+    *
+    * 这个参数用来设置Spark Streaming里StreamReceiver生成Block的时间间隔，默认为200ms，具体表现为
+    * 具体的Receiver所接收的数据，以相同的事件价格，周期性的从Buffer中生成一个StreamBlock放入队列，
+    * 等待进一步被存储到BlockManager中，供后续的计算过程使用。从理论上来说，为了保证每个StreamBatch
+    * 间隔里的数据是均匀的，这个时间间隔应该能被Batch的间隔时间长度整除。总体上来说，如果内存大小够用，
+    * Streaming的数据来得及处理，这个时间间隔的影响不大，当然，如果数据存储级别是Memory+ser，即做了
+    * 序列化处理，那么时间间隔的大小会影响序列化后的数据块的大小，对于Java的垃圾回收的行为会有一些影响。
+    *
+    * 此外，spark.streaming.blockQueueSize决定了在StreamBlock被存储到BlockManager之前，队列中最多
+    * 可以容纳多少个StreamBlock，默认为10，因为这个队列的轮询时间间隔是100ms，所以如果CPU不是特别繁忙
+    * 的话，基本上是没有问题的。
+    *
+    */
   private val blockIntervalMs = conf.getTimeAsMs("spark.streaming.blockInterval", "200ms")
   require(blockIntervalMs > 0, s"'spark.streaming.blockInterval' should be a positive value")
 
