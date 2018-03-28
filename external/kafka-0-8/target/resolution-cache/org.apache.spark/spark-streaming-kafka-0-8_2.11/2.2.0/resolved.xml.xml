@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra">
+	<info organisation="org.apache.spark"
+		module="spark-streaming-kafka-0-8_2.11"
+		revision="2.2.0"
+		status="integration"
+		publication="20171202151731"
+	>
+		<description>
+		spark-streaming-kafka-0-8
+		</description>
+	</info>
+	<configurations>
+		<conf name="compile" visibility="public" description=""/>
+		<conf name="runtime" visibility="public" description="" extends="compile"/>
+		<conf name="test" visibility="public" description="" extends="runtime"/>
+		<conf name="provided" visibility="public" description=""/>
+		<conf name="optional" visibility="public" description=""/>
+		<conf name="compile-internal" visibility="private" description="" extends="compile,optional,provided"/>
+		<conf name="runtime-internal" visibility="private" description="" extends="runtime,optional"/>
+		<conf name="test-internal" visibility="private" description="" extends="test,optional,provided"/>
+		<conf name="plugin" visibility="private" description=""/>
+		<conf name="sources" visibility="public" description=""/>
+		<conf name="docs" visibility="public" description=""/>
+		<conf name="pom" visibility="public" description=""/>
+		<conf name="scala-tool" visibility="private" description=""/>
+	</configurations>
+	<publications>
+		<artifact name="spark-streaming-kafka-0-8_2.11" type="pom" ext="pom" conf="pom"/>
+		<artifact name="spark-streaming-kafka-0-8_2.11" type="jar" ext="jar" conf="compile"/>
+		<artifact name="spark-streaming-kafka-0-8_2.11" type="src" ext="jar" conf="sources" e:classifier="sources"/>
+		<artifact name="spark-streaming-kafka-0-8_2.11" type="doc" ext="jar" conf="docs" e:classifier="javadoc"/>
+	</publications>
+	<dependencies>
+		<dependency org="org.scala-lang" name="scala-compiler" rev="2.11.8" conf="scala-tool->default,optional(default)"/>
+		<dependency org="org.scala-lang" name="scala-library" rev="2.11.8" conf="scala-tool->default,optional(default);compile->default(compile)"/>
+		<dependency org="org.apache.spark" name="spark-streaming_2.11" rev="2.2.0" conf="compile->default(compile)"/>
+		<dependency org="org.apache.spark" name="spark-core_2.11" rev="2.2.0" conf="test->test"/>
+		<dependency org="org.apache.spark" name="spark-tags_2.11" rev="2.2.0" conf="compile->default(compile);test->test"/>
+		<dependency org="org.apache.kafka" name="kafka_2.11" rev="0.8.2.1" conf="compile->default(compile)">
+			<exclude org="com.sun.jmx" module="jmxri" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="com.sun.jdmk" module="jmxtools" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="net.sf.jopt-simple" module="jopt-simple" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="org.slf4j" module="slf4j-simple" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="org.apache.zookeeper" module="zookeeper" name="*" type="*" ext="*" conf="" matcher="exact"/>
+		</dependency>
+		<dependency org="net.sf.jopt-simple" name="jopt-simple" rev="3.2" conf="test->default(compile)"/>
+		<dependency org="org.scalacheck" name="scalacheck_2.11" rev="1.12.5" conf="test->default(compile)"/>
+		<dependency org="org.spark-project.spark" name="unused" rev="1.0.0" conf="compile->default(compile)"/>
+		<dependency org="org.scalatest" name="scalatest_2.11" rev="2.2.6" conf="test->default(compile)"/>
+		<dependency org="junit" name="junit" rev="4.12" conf="test->default(compile)"/>
+		<dependency org="com.novocode" name="junit-interface" rev="0.11" conf="test->default(compile)"/>
+		<dependency org="com.google.guava" name="guava" rev="14.0.1" conf="compile->default(compile)"/>
+		<dependency org="com.typesafe.genjavadoc" name="genjavadoc-plugin_2.11.8" rev="0.10" conf="plugin->default(compile)"/>
+		<override org="com.google.guava" module="guava" matcher="exact" rev="14.0.1"/>
+	</dependencies>
+</ivy-module>
