@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra">
+	<info organisation="org.apache.spark"
+		module="spark-core_2.11"
+		revision="2.2.0"
+		status="integration"
+		publication="20171202151731"
+	>
+		<description>
+		spark-core
+		</description>
+	</info>
+	<configurations>
+		<conf name="compile" visibility="public" description=""/>
+		<conf name="runtime" visibility="public" description="" extends="compile"/>
+		<conf name="test" visibility="public" description="" extends="runtime"/>
+		<conf name="provided" visibility="public" description=""/>
+		<conf name="optional" visibility="public" description=""/>
+		<conf name="compile-internal" visibility="private" description="" extends="compile,optional,provided"/>
+		<conf name="runtime-internal" visibility="private" description="" extends="runtime,optional"/>
+		<conf name="test-internal" visibility="private" description="" extends="test,optional,provided"/>
+		<conf name="plugin" visibility="private" description=""/>
+		<conf name="sources" visibility="public" description=""/>
+		<conf name="docs" visibility="public" description=""/>
+		<conf name="pom" visibility="public" description=""/>
+		<conf name="scala-tool" visibility="private" description=""/>
+	</configurations>
+	<publications>
+		<artifact name="spark-core_2.11" type="pom" ext="pom" conf="pom"/>
+		<artifact name="spark-core_2.11" type="jar" ext="jar" conf="compile"/>
+		<artifact name="spark-core_2.11" type="src" ext="jar" conf="sources" e:classifier="sources"/>
+		<artifact name="spark-core_2.11" type="doc" ext="jar" conf="docs" e:classifier="javadoc"/>
+	</publications>
+	<dependencies>
+		<dependency org="org.scala-lang" name="scala-compiler" rev="2.11.8" conf="scala-tool->default,optional(default)"/>
+		<dependency org="org.scala-lang" name="scala-library" rev="2.11.8" conf="scala-tool->default,optional(default);compile->default(compile)"/>
+		<dependency org="org.apache.spark" name="spark-launcher_2.11" rev="2.2.0" conf="compile->default(compile)"/>
+		<dependency org="org.apache.spark" name="spark-network-common_2.11" rev="2.2.0" conf="compile->default(compile)"/>
+		<dependency org="org.apache.spark" name="spark-network-shuffle_2.11" rev="2.2.0" conf="compile->default(compile)"/>
+		<dependency org="org.apache.spark" name="spark-unsafe_2.11" rev="2.2.0" conf="compile->default(compile)"/>
+		<dependency org="org.apache.spark" name="spark-tags_2.11" rev="2.2.0" conf="compile->default(compile);test->test"/>
+		<dependency org="org.apache.avro" name="avro" rev="1.7.7" conf="compile->default(compile)"/>
+		<dependency org="org.apache.avro" name="avro-mapred" rev="1.7.7" conf="compile->default(compile)">
+			<artifact name="avro-mapred" type="jar" ext="jar" conf="*" e:classifier="hadoop2"/>
+			<exclude org="io.netty" module="netty" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="org.mortbay.jetty" module="jetty" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="org.mortbay.jetty" module="jetty-util" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="org.mortbay.jetty" module="servlet-api" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="org.apache.velocity" module="velocity" name="*" type="*" ext="*" conf="" matcher="exact"/>
+		</dependency>
+		<dependency org="com.google.guava" name="guava" rev="14.0.1" conf="provided->default(compile)"/>
+		<dependency org="com.twitter" name="chill_2.11" rev="0.8.0" conf="compile->default(compile)"/>
+		<dependency org="com.twitter" name="chill-java" rev="0.8.0" conf="compile->default(compile)"/>
+		<dependency org="org.apache.xbean" name="xbean-asm5-shaded" rev="4.4" conf="compile->default(compile)"/>
+		<dependency org="org.apache.hadoop" name="hadoop-client" rev="2.6.5" conf="compile->default(compile)">
+			<exclude org="asm" module="asm" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="org.codehaus.jackson" module="jackson-mapper-asl" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="org.ow2.asm" module="asm" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="org.jboss.netty" module="netty" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="commons-logging" module="commons-logging" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="org.mockito" module="mockito-all" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="org.mortbay.jetty" module="servlet-api-2.5" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="javax.servlet" module="servlet-api" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="junit" module="junit" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="com.sun.jersey" module="*" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="com.sun.jersey.jersey-test-framework" module="*" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="com.sun.jersey.contribs" module="*" name="*" type="*" ext="*" conf="" matcher="exact"/>
+		</dependency>
+		<dependency org="net.java.dev.jets3t" name="jets3t" rev="0.9.3" conf="compile->default(compile)">
+			<exclude org="commons-logging" module="commons-logging" name="*" type="*" ext="*" conf="" matcher="exact"/>
+		</dependency>
+		<dependency org="org.apache.curator" name="curator-recipes" rev="2.6.0" conf="compile->default(compile)">
+			<exclude org="org.jboss.netty" module="netty" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="jline" module="jline" name="*" type="*" ext="*" conf="" matcher="exact"/>
+		</dependency>
+		<dependency org="org.eclipse.jetty" name="jetty-plus" rev="9.3.11.v20160721" conf="compile->default(compile)"/>
+		<dependency org="org.eclipse.jetty" name="jetty-security" rev="9.3.11.v20160721" conf="compile->default(compile)"/>
+		<dependency org="org.eclipse.jetty" name="jetty-util" rev="9.3.11.v20160721" conf="compile->default(compile)"/>
+		<dependency org="org.eclipse.jetty" name="jetty-server" rev="9.3.11.v20160721" conf="compile->default(compile)"/>
+		<dependency org="org.eclipse.jetty" name="jetty-http" rev="9.3.11.v20160721" conf="compile->default(compile)"/>
+		<dependency org="org.eclipse.jetty" name="jetty-continuation" rev="9.3.11.v20160721" conf="compile->default(compile)"/>
+		<dependency org="org.eclipse.jetty" name="jetty-servlet" rev="9.3.11.v20160721" conf="compile->default(compile)"/>
+		<dependency org="org.eclipse.jetty" name="jetty-proxy" rev="9.3.11.v20160721" conf="compile->default(compile)"/>
+		<dependency org="org.eclipse.jetty" name="jetty-client" rev="9.3.11.v20160721" conf="compile->default(compile)"/>
+		<dependency org="org.eclipse.jetty" name="jetty-servlets" rev="9.3.11.v20160721" conf="compile->default(compile)"/>
+		<dependency org="javax.servlet" name="javax.servlet-api" rev="3.1.0" conf="compile->default(compile)"/>
+		<dependency org="org.apache.commons" name="commons-lang3" rev="3.5" conf="compile->default(compile)"/>
+		<dependency org="org.apache.commons" name="commons-math3" rev="3.4.1" conf="compile->default(compile)"/>
+		<dependency org="com.google.code.findbugs" name="jsr305" rev="1.3.9" conf="compile->default(compile)"/>
+		<dependency org="org.slf4j" name="slf4j-api" rev="1.7.16" conf="compile->default(compile)"/>
+		<dependency org="org.slf4j" name="jul-to-slf4j" rev="1.7.16" conf="compile->default(compile)"/>
+		<dependency org="org.slf4j" name="jcl-over-slf4j" rev="1.7.16" conf="compile->default(compile)"/>
+		<dependency org="log4j" name="log4j" rev="1.2.17" conf="compile->default(compile)"/>
+		<dependency org="org.slf4j" name="slf4j-log4j12" rev="1.7.16" conf="compile->default(compile)"/>
+		<dependency org="com.ning" name="compress-lzf" rev="1.0.3" conf="compile->default(compile)"/>
+		<dependency org="org.xerial.snappy" name="snappy-java" rev="1.1.2.6" conf="compile->default(compile)"/>
+		<dependency org="net.jpountz.lz4" name="lz4" rev="1.3.0" conf="compile->default(compile)"/>
+		<dependency org="org.roaringbitmap" name="RoaringBitmap" rev="0.5.11" conf="compile->default(compile)"/>
+		<dependency org="commons-net" name="commons-net" rev="2.2" conf="compile->default(compile)"/>
+		<dependency org="org.json4s" name="json4s-jackson_2.11" rev="3.2.11" conf="compile->default(compile)"/>
+		<dependency org="org.glassfish.jersey.core" name="jersey-client" rev="2.22.2" conf="compile->default(compile)"/>
+		<dependency org="org.glassfish.jersey.core" name="jersey-common" rev="2.22.2" conf="compile->default(compile)"/>
+		<dependency org="org.glassfish.jersey.core" name="jersey-server" rev="2.22.2" conf="compile->default(compile)"/>
+		<dependency org="org.glassfish.jersey.containers" name="jersey-container-servlet" rev="2.22.2" conf="compile->default(compile)"/>
+		<dependency org="org.glassfish.jersey.containers" name="jersey-container-servlet-core" rev="2.22.2" conf="compile->default(compile)"/>
+		<dependency org="io.netty" name="netty-all" rev="4.0.43.Final" conf="compile->default(compile)"/>
+		<dependency org="io.netty" name="netty" rev="3.9.9.Final" conf="compile->default(compile)"/>
+		<dependency org="com.clearspring.analytics" name="stream" rev="2.7.0" conf="compile->default(compile)">
+			<exclude org="it.unimi.dsi" module="fastutil" name="*" type="*" ext="*" conf="" matcher="exact"/>
+		</dependency>
+		<dependency org="io.dropwizard.metrics" name="metrics-core" rev="3.1.2" conf="compile->default(compile)"/>
+		<dependency org="io.dropwizard.metrics" name="metrics-jvm" rev="3.1.2" conf="compile->default(compile)"/>
+		<dependency org="io.dropwizard.metrics" name="metrics-json" rev="3.1.2" conf="compile->default(compile)"/>
+		<dependency org="io.dropwizard.metrics" name="metrics-graphite" rev="3.1.2" conf="compile->default(compile)"/>
+		<dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.6.5" conf="compile->default(compile)"/>
+		<dependency org="com.fasterxml.jackson.module" name="jackson-module-scala_2.11" rev="2.6.5" conf="compile->default(compile)">
+			<exclude org="com.google.guava" module="guava" name="*" type="*" ext="*" conf="" matcher="exact"/>
+		</dependency>
+		<dependency org="org.apache.derby" name="derby" rev="10.12.1.1" conf="test->default(compile)"/>
+		<dependency org="org.apache.ivy" name="ivy" rev="2.4.0" conf="compile->default(compile)"/>
+		<dependency org="oro" name="oro" rev="2.0.8" conf="compile->default(compile)"/>
+		<dependency org="org.seleniumhq.selenium" name="selenium-java" rev="2.52.0" conf="test->default(compile)">
+			<exclude org="com.google.guava" module="guava" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="io.netty" module="netty" name="*" type="*" ext="*" conf="" matcher="exact"/>
+		</dependency>
+		<dependency org="org.seleniumhq.selenium" name="selenium-htmlunit-driver" rev="2.52.0" conf="test->default(compile)"/>
+		<dependency org="xml-apis" name="xml-apis" rev="1.4.01" conf="test->default(compile)"/>
+		<dependency org="org.hamcrest" name="hamcrest-core" rev="1.3" conf="test->default(compile)"/>
+		<dependency org="org.hamcrest" name="hamcrest-library" rev="1.3" conf="test->default(compile)"/>
+		<dependency org="org.mockito" name="mockito-core" rev="1.10.19" conf="test->default(compile)"/>
+		<dependency org="org.scalacheck" name="scalacheck_2.11" rev="1.12.5" conf="test->default(compile)"/>
+		<dependency org="org.apache.curator" name="curator-test" rev="2.6.0" conf="test->default(compile)"/>
+		<dependency org="net.razorvine" name="pyrolite" rev="4.13" conf="compile->default(compile)">
+			<exclude org="net.razorvine" module="serpent" name="*" type="*" ext="*" conf="" matcher="exact"/>
+		</dependency>
+		<dependency org="net.sf.py4j" name="py4j" rev="0.10.4" conf="compile->default(compile)"/>
+		<dependency org="org.apache.commons" name="commons-crypto" rev="1.0.0" conf="compile->default(compile)">
+			<exclude org="net.java.dev.jna" module="jna" name="*" type="*" ext="*" conf="" matcher="exact"/>
+		</dependency>
+		<dependency org="org.spark-project.spark" name="unused" rev="1.0.0" conf="compile->default(compile)"/>
+		<dependency org="org.scalatest" name="scalatest_2.11" rev="2.2.6" conf="test->default(compile)"/>
+		<dependency org="junit" name="junit" rev="4.12" conf="test->default(compile)"/>
+		<dependency org="com.novocode" name="junit-interface" rev="0.11" conf="test->default(compile)"/>
+		<dependency org="com.typesafe.genjavadoc" name="genjavadoc-plugin_2.11.8" rev="0.10" conf="plugin->default(compile)"/>
+		<override org="com.google.guava" module="guava" matcher="exact" rev="14.0.1"/>
+	</dependencies>
+</ivy-module>

@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<allocations>
+    <--
+    每个调度池都支持3个属性。
+    schedulingMode：该属性的值可以是FIFO或者FAIR，用来控制作业在调度池中排队运行（默认情况下）或者公平分享调度池资源。
+    weight：控制调度池在集群之间的分配。默认情况下，所有调度池的weight值都是为1。
+            例如：如果你指定了一个调度池的值为2，那么这个调度池就比其它调度池多获得2倍的资源。
+            设置一个更高的weight值，例如1000，就可以实现线程池之间的优先权——实际上，weight值为1000的调度池无论什么时候作业被激活，它都总是能够最先运行。
+    minShare：除了一个整体的权重，如果管理员喜欢，可以给每个调度池指定一个最小的shares值（也就是CPU的核数目）。
+            公平调度器通过权重重新分配资源之前总是试图满足所有活动调度池的最小share。在没有给定一个高优先级的其他集群中，
+            minShare属性是另外的一种方式来确保调度池能够迅速的获得一定数量的资源（例如10核CPU），默认情况下，每个调度池的minShare值都为0。
+    -->
+   <pool name="pool_with_invalid_min_share">
+        <minShare>INVALID_MIN_SHARE</minShare>
+        <weight>2</weight>
+        <schedulingMode>FAIR</schedulingMode>
+    </pool>
+    <pool name="pool_with_invalid_weight">
+        <minShare>1</minShare>
+        <weight>INVALID_WEIGHT</weight>
+        <schedulingMode>FAIR</schedulingMode>
+    </pool>
+    <pool name="pool_with_invalid_scheduling_mode">
+        <minShare>3</minShare>
+        <weight>2</weight>
+        <schedulingMode>INVALID_SCHEDULING_MODE</schedulingMode>
+    </pool>
+    <pool name="pool_with_non_uppercase_scheduling_mode">
+        <minShare>2</minShare>
+        <weight>1</weight>
+        <schedulingMode>fair</schedulingMode>
+    </pool>
+    <pool name="pool_with_NONE_scheduling_mode">
+        <minShare>1</minShare>
+        <weight>2</weight>
+        <schedulingMode>NONE</schedulingMode>
+    </pool>
+    <pool name="pool_with_whitespace_min_share">
+        <minShare>  </minShare>
+        <weight>2</weight>
+        <schedulingMode>FAIR</schedulingMode>
+    </pool>
+    <pool name="pool_with_whitespace_weight">
+        <minShare>1</minShare>
+        <weight>  </weight>
+        <schedulingMode>FAIR</schedulingMode>
+    </pool>
+    <pool name="pool_with_whitespace_scheduling_mode">
+        <minShare>3</minShare>
+        <weight>2</weight>
+        <schedulingMode>  </schedulingMode>
+    </pool>
+    <pool name="pool_with_empty_min_share">
+        <minShare></minShare>
+        <weight>3</weight>
+        <schedulingMode>FAIR</schedulingMode>
+    </pool>
+    <pool name="pool_with_empty_weight">
+        <minShare>2</minShare>
+        <weight></weight>
+        <schedulingMode>FAIR</schedulingMode>
+    </pool>
+    <pool name="pool_with_empty_scheduling_mode">
+        <minShare>2</minShare>
+        <weight>2</weight>
+        <schedulingMode></schedulingMode>
+    </pool>
+    <pool name="pool_with_surrounded_whitespace">
+        <minShare> 3 </minShare>
+        <weight> 2 </weight>
+        <schedulingMode> FAIR </schedulingMode>
+    </pool>
+</allocations>
