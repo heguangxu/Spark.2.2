@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ivy-report.xsl"?>
+<ivy-report version="1.0">
+	<info
+		organisation="org.apache.spark"
+		module="spark-streaming$sources_2.11"
+		revision="2.2.0"
+		conf="provided"
+		confs="compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom, scala-tool"
+		date="20171202162024"/>
+	<dependencies>
+		<module organisation="org.eclipse.jetty" name="jetty-servlets">
+			<revision name="9.3.11.v20160721" status="release" pubdate="20160722094515" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.eclipse.org/jetty" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="11">
+				<license name="Apache Software License - Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<license name="Eclipse Public License - Version 1.0" url="http://www.eclipse.org/org/documents/epl-v10.php"/>
+				<metadata-artifact status="no" details="" size="10620" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-servlets\ivy-9.3.11.v20160721.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-servlets/9.3.11.v20160721/jetty-servlets-9.3.11.v20160721.pom"/>
+				<caller organisation="org.apache.spark" name="spark-streaming$sources_2.11" conf="provided" rev="9.3.11.v20160721" rev-constraint-default="9.3.11.v20160721" rev-constraint-dynamic="9.3.11.v20160721" callerrev="2.2.0"/>
+				<artifacts>
+					<artifact name="jetty-servlets" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="51965" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-servlets\srcs\jetty-servlets-9.3.11.v20160721-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-servlets/9.3.11.v20160721/jetty-servlets-9.3.11.v20160721-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.google.guava" name="guava">
+			<revision name="14.0.1" status="release" pubdate="20130315075719" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="10">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="3942" time="0" location="C:\Users\lcc\.ivy2\cache\com.google.guava\guava\ivy-14.0.1.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/com/google/guava/guava/14.0.1/guava-14.0.1.pom"/>
+				<caller organisation="org.apache.spark" name="spark-streaming$sources_2.11" conf="provided" rev="14.0.1" rev-constraint-default="14.0.1" rev-constraint-dynamic="14.0.1" callerrev="2.2.0"/>
+				<artifacts>
+					<artifact name="guava" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="1170076" time="0" location="C:\Users\lcc\.ivy2\cache\com.google.guava\guava\srcs\guava-14.0.1-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/com/google/guava/guava/14.0.1/guava-14.0.1-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.eclipse.jetty" name="jetty-continuation">
+			<revision name="9.3.11.v20160721" status="release" pubdate="20160722094455" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.eclipse.org/jetty" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="5">
+				<license name="Apache Software License - Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<license name="Eclipse Public License - Version 1.0" url="http://www.eclipse.org/org/documents/epl-v10.php"/>
+				<metadata-artifact status="no" details="" size="9090" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-continuation\ivy-9.3.11.v20160721.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-continuation/9.3.11.v20160721/jetty-continuation-9.3.11.v20160721.pom"/>
+				<caller organisation="org.apache.spark" name="spark-streaming$sources_2.11" conf="provided" rev="9.3.11.v20160721" rev-constraint-default="9.3.11.v20160721" rev-constraint-dynamic="9.3.11.v20160721" callerrev="2.2.0"/>
+				<artifacts>
+					<artifact name="jetty-continuation" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="15899" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-continuation\srcs\jetty-continuation-9.3.11.v20160721-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-continuation/9.3.11.v20160721/jetty-continuation-9.3.11.v20160721-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.eclipse.jetty" name="jetty-plus">
+			<revision name="9.3.11.v20160721" status="release" pubdate="20160722094224" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.eclipse.org/jetty" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="2">
+				<license name="Apache Software License - Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<license name="Eclipse Public License - Version 1.0" url="http://www.eclipse.org/org/documents/epl-v10.php"/>
+				<metadata-artifact status="no" details="" size="9713" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-plus\ivy-9.3.11.v20160721.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-plus/9.3.11.v20160721/jetty-plus-9.3.11.v20160721.pom"/>
+				<caller organisation="org.apache.spark" name="spark-streaming$sources_2.11" conf="provided" rev="9.3.11.v20160721" rev-constraint-default="9.3.11.v20160721" rev-constraint-dynamic="9.3.11.v20160721" callerrev="2.2.0"/>
+				<artifacts>
+					<artifact name="jetty-plus" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="40321" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-plus\srcs\jetty-plus-9.3.11.v20160721-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-plus/9.3.11.v20160721/jetty-plus-9.3.11.v20160721-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.eclipse.jetty" name="jetty-jndi">
+			<revision name="9.3.11.v20160721" status="release" pubdate="20160722094202" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.eclipse.org/jetty" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="7">
+				<license name="Apache Software License - Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<license name="Eclipse Public License - Version 1.0" url="http://www.eclipse.org/org/documents/epl-v10.php"/>
+				<metadata-artifact status="no" details="" size="9708" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-jndi\ivy-9.3.11.v20160721.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-jndi/9.3.11.v20160721/jetty-jndi-9.3.11.v20160721.pom"/>
+				<caller organisation="org.apache.spark" name="spark-streaming$sources_2.11" conf="provided" rev="9.3.11.v20160721" rev-constraint-default="9.3.11.v20160721" rev-constraint-dynamic="9.3.11.v20160721" callerrev="2.2.0"/>
+				<artifacts>
+					<artifact name="jetty-jndi" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="29657" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-jndi\srcs\jetty-jndi-9.3.11.v20160721-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-jndi/9.3.11.v20160721/jetty-jndi-9.3.11.v20160721-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.eclipse.jetty" name="jetty-webapp">
+			<revision name="9.3.11.v20160721" status="release" pubdate="20160722094141" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.eclipse.org/jetty" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="3">
+				<license name="Apache Software License - Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<license name="Eclipse Public License - Version 1.0" url="http://www.eclipse.org/org/documents/epl-v10.php"/>
+				<metadata-artifact status="no" details="" size="9580" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-webapp\ivy-9.3.11.v20160721.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-webapp/9.3.11.v20160721/jetty-webapp-9.3.11.v20160721.pom"/>
+				<caller organisation="org.apache.spark" name="spark-streaming$sources_2.11" conf="provided" rev="9.3.11.v20160721" rev-constraint-default="9.3.11.v20160721" rev-constraint-dynamic="9.3.11.v20160721" callerrev="2.2.0"/>
+				<artifacts>
+					<artifact name="jetty-webapp" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="78195" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-webapp\srcs\jetty-webapp-9.3.11.v20160721-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-webapp/9.3.11.v20160721/jetty-webapp-9.3.11.v20160721-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.eclipse.jetty" name="jetty-servlet">
+			<revision name="9.3.11.v20160721" status="release" pubdate="20160722094114" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.eclipse.org/jetty" downloaded="false" searched="false" default="false" conf="default, compile, runtime(*), master(compile), runtime, default(compile), compile(*), master" position="6">
+				<license name="Apache Software License - Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<license name="Eclipse Public License - Version 1.0" url="http://www.eclipse.org/org/documents/epl-v10.php"/>
+				<metadata-artifact status="no" details="" size="9651" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-servlet\ivy-9.3.11.v20160721.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-servlet/9.3.11.v20160721/jetty-servlet-9.3.11.v20160721.pom"/>
+				<caller organisation="org.apache.spark" name="spark-streaming$sources_2.11" conf="provided" rev="9.3.11.v20160721" rev-constraint-default="9.3.11.v20160721" rev-constraint-dynamic="9.3.11.v20160721" callerrev="2.2.0"/>
+				<artifacts>
+					<artifact name="jetty-servlet" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="66476" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-servlet\srcs\jetty-servlet-9.3.11.v20160721-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-servlet/9.3.11.v20160721/jetty-servlet-9.3.11.v20160721-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.eclipse.jetty" name="jetty-security">
+			<revision name="9.3.11.v20160721" status="release" pubdate="20160722094048" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.eclipse.org/jetty" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="13">
+				<license name="Apache Software License - Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<license name="Eclipse Public License - Version 1.0" url="http://www.eclipse.org/org/documents/epl-v10.php"/>
+				<metadata-artifact status="no" details="" size="9280" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-security\ivy-9.3.11.v20160721.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-security/9.3.11.v20160721/jetty-security-9.3.11.v20160721.pom"/>
+				<caller organisation="org.apache.spark" name="spark-streaming$sources_2.11" conf="provided" rev="9.3.11.v20160721" rev-constraint-default="9.3.11.v20160721" rev-constraint-dynamic="9.3.11.v20160721" callerrev="2.2.0"/>
+				<artifacts>
+					<artifact name="jetty-security" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="66580" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-security\srcs\jetty-security-9.3.11.v20160721-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-security/9.3.11.v20160721/jetty-security-9.3.11.v20160721-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.eclipse.jetty" name="jetty-server">
+			<revision name="9.3.11.v20160721" status="release" pubdate="20160722094018" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.eclipse.org/jetty" downloaded="false" searched="false" default="false" conf="default, compile, runtime(*), master(compile), runtime, default(compile), compile(*), master" position="0">
+				<license name="Apache Software License - Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<license name="Eclipse Public License - Version 1.0" url="http://www.eclipse.org/org/documents/epl-v10.php"/>
+				<metadata-artifact status="no" details="" size="10300" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-server\ivy-9.3.11.v20160721.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-server/9.3.11.v20160721/jetty-server-9.3.11.v20160721.pom"/>
+				<caller organisation="org.apache.spark" name="spark-streaming$sources_2.11" conf="provided" rev="9.3.11.v20160721" rev-constraint-default="9.3.11.v20160721" rev-constraint-dynamic="9.3.11.v20160721" callerrev="2.2.0"/>
+				<artifacts>
+					<artifact name="jetty-server" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="301027" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-server\srcs\jetty-server-9.3.11.v20160721-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-server/9.3.11.v20160721/jetty-server-9.3.11.v20160721-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.eclipse.jetty" name="jetty-xml">
+			<revision name="9.3.11.v20160721" status="release" pubdate="20160722093918" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.eclipse.org/jetty" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="12">
+				<license name="Apache Software License - Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<license name="Eclipse Public License - Version 1.0" url="http://www.eclipse.org/org/documents/epl-v10.php"/>
+				<metadata-artifact status="no" details="" size="9214" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-xml\ivy-9.3.11.v20160721.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-xml/9.3.11.v20160721/jetty-xml-9.3.11.v20160721.pom"/>
+				<caller organisation="org.apache.spark" name="spark-streaming$sources_2.11" conf="provided" rev="9.3.11.v20160721" rev-constraint-default="9.3.11.v20160721" rev-constraint-dynamic="9.3.11.v20160721" callerrev="2.2.0"/>
+				<artifacts>
+					<artifact name="jetty-xml" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="31184" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-xml\srcs\jetty-xml-9.3.11.v20160721-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-xml/9.3.11.v20160721/jetty-xml-9.3.11.v20160721-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.eclipse.jetty" name="jetty-io">
+			<revision name="9.3.11.v20160721" status="release" pubdate="20160722093857" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.eclipse.org/jetty" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="8">
+				<license name="Apache Software License - Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<license name="Eclipse Public License - Version 1.0" url="http://www.eclipse.org/org/documents/epl-v10.php"/>
+				<metadata-artifact status="no" details="" size="9395" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-io\ivy-9.3.11.v20160721.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-io/9.3.11.v20160721/jetty-io-9.3.11.v20160721.pom"/>
+				<caller organisation="org.apache.spark" name="spark-streaming$sources_2.11" conf="provided" rev="9.3.11.v20160721" rev-constraint-default="9.3.11.v20160721" rev-constraint-dynamic="9.3.11.v20160721" callerrev="2.2.0"/>
+				<artifacts>
+					<artifact name="jetty-io" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="59935" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-io\srcs\jetty-io-9.3.11.v20160721-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-io/9.3.11.v20160721/jetty-io-9.3.11.v20160721-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.eclipse.jetty" name="jetty-http">
+			<revision name="9.3.11.v20160721" status="release" pubdate="20160722093834" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.eclipse.org/jetty" downloaded="false" searched="false" default="false" conf="default, compile, runtime(*), master(compile), runtime, default(compile), compile(*), master" position="1">
+				<license name="Apache Software License - Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<license name="Eclipse Public License - Version 1.0" url="http://www.eclipse.org/org/documents/epl-v10.php"/>
+				<metadata-artifact status="no" details="" size="9222" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-http\ivy-9.3.11.v20160721.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-http/9.3.11.v20160721/jetty-http-9.3.11.v20160721.pom"/>
+				<caller organisation="org.apache.spark" name="spark-streaming$sources_2.11" conf="provided" rev="9.3.11.v20160721" rev-constraint-default="9.3.11.v20160721" rev-constraint-dynamic="9.3.11.v20160721" callerrev="2.2.0"/>
+				<artifacts>
+					<artifact name="jetty-http" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="89448" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-http\srcs\jetty-http-9.3.11.v20160721-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-http/9.3.11.v20160721/jetty-http-9.3.11.v20160721-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.eclipse.jetty" name="jetty-util">
+			<revision name="9.3.11.v20160721" status="release" pubdate="20160722093805" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.eclipse.org/jetty" downloaded="false" searched="false" default="false" conf="default, compile, runtime(*), master(compile), runtime, default(compile), compile(*), master" position="4">
+				<license name="Apache Software License - Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<license name="Eclipse Public License - Version 1.0" url="http://www.eclipse.org/org/documents/epl-v10.php"/>
+				<metadata-artifact status="no" details="" size="9614" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-util\ivy-9.3.11.v20160721.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-util/9.3.11.v20160721/jetty-util-9.3.11.v20160721.pom"/>
+				<caller organisation="org.apache.spark" name="spark-streaming$sources_2.11" conf="provided" rev="9.3.11.v20160721" rev-constraint-default="9.3.11.v20160721" rev-constraint-dynamic="9.3.11.v20160721" callerrev="2.2.0"/>
+				<artifacts>
+					<artifact name="jetty-util" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="295662" time="0" location="C:\Users\lcc\.ivy2\cache\org.eclipse.jetty\jetty-util\srcs\jetty-util-9.3.11.v20160721-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-util/9.3.11.v20160721/jetty-util-9.3.11.v20160721-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="javax.servlet" name="javax.servlet-api">
+			<revision name="3.1.0" status="release" pubdate="20130426075239" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://servlet-spec.java.net" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="9">
+				<license name="CDDL + GPLv2 with classpath exception" url="https://glassfish.dev.java.net/nonav/public/CDDL+GPL.html"/>
+				<metadata-artifact status="no" details="" size="4319" time="0" location="C:\Users\lcc\.ivy2\cache\javax.servlet\javax.servlet-api\ivy-3.1.0.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.pom"/>
+				<caller organisation="org.apache.spark" name="spark-streaming$sources_2.11" conf="provided" rev="3.1.0" rev-constraint-default="3.1.0" rev-constraint-dynamic="3.1.0" callerrev="2.2.0"/>
+				<artifacts>
+					<artifact name="javax.servlet-api" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="223386" time="0" location="C:\Users\lcc\.ivy2\cache\javax.servlet\javax.servlet-api\srcs\javax.servlet-api-3.1.0-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+	</dependencies>
+</ivy-report>
