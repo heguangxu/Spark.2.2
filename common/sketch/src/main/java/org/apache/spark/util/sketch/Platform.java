@@ -147,11 +147,11 @@ final class Platform {
   private static final long UNSAFE_COPY_THRESHOLD = 1024L * 1024L;
 
   static {
-    sun.misc.Unsafe unsafe;
+    Unsafe unsafe;
     try {
       Field unsafeField = Unsafe.class.getDeclaredField("theUnsafe");
       unsafeField.setAccessible(true);
-      unsafe = (sun.misc.Unsafe) unsafeField.get(null);
+      unsafe = (Unsafe) unsafeField.get(null);
     } catch (Throwable cause) {
       unsafe = null;
     }

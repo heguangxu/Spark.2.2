@@ -36,8 +36,6 @@ import org.apache.spark.network.client.TransportClient;
 /**
  * StreamManager which allows registration of an Iterator&lt;ManagedBuffer&gt;, which are
  * individually fetched as chunks by the client. Each registered buffer is one chunk.
- *
- * StreamManager，它允许注册一个Iterator<ManagedBuffer>它是由客户端单独获取的。每个已注册的缓冲区是一个块。
  */
 public class OneForOneStreamManager extends StreamManager {
   private static final Logger logger = LoggerFactory.getLogger(OneForOneStreamManager.class);
@@ -45,7 +43,7 @@ public class OneForOneStreamManager extends StreamManager {
   private final AtomicLong nextStreamId;
   private final ConcurrentHashMap<Long, StreamState> streams;
 
-  /** State of a single stream.  单流状态。 */
+  /** State of a single stream. */
   private static class StreamState {
     final String appId;
     final Iterator<ManagedBuffer> buffers;
@@ -66,8 +64,6 @@ public class OneForOneStreamManager extends StreamManager {
   public OneForOneStreamManager() {
     // For debugging purposes, start with a random stream id to help identifying different streams.
     // This does not need to be globally unique, only unique to this class.
-    // 出于调试目的，从一个随机流id开始，以帮助识别不同的流。
-    // 这并不需要在全局上是惟一的，只有在这个类中是唯一的。
     nextStreamId = new AtomicLong((long) new Random().nextInt(Integer.MAX_VALUE) * 1000);
     streams = new ConcurrentHashMap<>();
   }

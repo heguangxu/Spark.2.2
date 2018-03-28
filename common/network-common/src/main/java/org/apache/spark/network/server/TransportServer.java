@@ -58,7 +58,6 @@ public class TransportServer implements Closeable {
   /**
    * Creates a TransportServer that binds to the given host and the given port, or to any available
    * if 0. If you don't want to bind to any special host, set "hostToBind" to null.
-   * 创建一个传输服务器，它绑定到给定的主机和给定的端口，如果是0，会绑定到任何可用的端口。如果您不想绑定到任何指定的主机，则将“hostToBind”设置为null。
    * */
   public TransportServer(
       TransportContext context,
@@ -72,15 +71,12 @@ public class TransportServer implements Closeable {
     this.bootstraps = Lists.newArrayList(Preconditions.checkNotNull(bootstraps));
 
     try {
-      // 初始化
       init(hostToBind, portToBind);
     } catch (RuntimeException e) {
       JavaUtils.closeQuietly(this);
       throw e;
     }
   }
-
-
 
   public int getPort() {
     if (port == -1) {
@@ -90,15 +86,12 @@ public class TransportServer implements Closeable {
   }
 
   private void init(String hostToBind, int portToBind) {
-    // IO模式：nio 还是 epoll
+
     IOMode ioMode = IOMode.valueOf(conf.ioMode());
-    // 创建一个基于IOMode的Netty EventLoopGroup。这一点是netty的相关知识 boss线程和worker线程
     EventLoopGroup bossGroup =
       NettyUtils.createEventLoop(ioMode, conf.serverThreads(), conf.getModuleName() + "-server");
-    // 事件循环组
     EventLoopGroup workerGroup = bossGroup;
 
-    // 创建一个byte缓存池分配器，但是禁用线程本地缓存
     PooledByteBufAllocator allocator = NettyUtils.createPooledByteBufAllocator(
       conf.preferDirectBufs(), true /* allowCache */, conf.serverThreads());
 
@@ -127,19 +120,16 @@ public class TransportServer implements Closeable {
         for (TransportServerBootstrap bootstrap : bootstraps) {
           rpcHandler = bootstrap.doBootstrap(ch, rpcHandler);
         }
-        // 初始化
         context.initializePipeline(ch, rpcHandler);
       }
     });
 
     InetSocketAddress address = hostToBind == null ?
         new InetSocketAddress(portToBind): new InetSocketAddress(hostToBind, portToBind);
-    // 绑定地址和端口
     channelFuture = bootstrap.bind(address);
     channelFuture.syncUninterruptibly();
 
     port = ((InetSocketAddress) channelFuture.channel().localAddress()).getPort();
-    // 到时候查查这个Shuffle server started on port  看的看是什么内容
     logger.debug("Shuffle server started on port: {}", port);
   }
 

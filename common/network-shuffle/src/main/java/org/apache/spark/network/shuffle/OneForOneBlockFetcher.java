@@ -47,7 +47,7 @@ import org.apache.spark.network.util.TransportConf;
  * and Java serialization is used.
  *
  * Note that this typically corresponds to a
- * {@link org.apache.spark.network.server.OneForOneStreamManager} on the server side.
+ * {@link OneForOneStreamManager} on the server side.
  */
 public class OneForOneBlockFetcher {
   private static final Logger logger = LoggerFactory.getLogger(OneForOneBlockFetcher.class);

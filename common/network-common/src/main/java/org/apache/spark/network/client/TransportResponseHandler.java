@@ -48,9 +48,6 @@ import org.apache.spark.network.util.TransportFrameDecoder;
  * [[TransportClient]]. It works by tracking the list of outstanding requests (and their callbacks).
  *
  * Concurrency: thread safe and can be called from multiple threads.
- *
- * 处理服务器响应的处理程序，响应来自TransportClient的请求。它通过跟踪未处理的请求列表(以及它们的回调)来工作。
- * 并发:线程安全，可以从多个线程调用。
  */
 public class TransportResponseHandler extends MessageHandler<ResponseMessage> {
   private static final Logger logger = LoggerFactory.getLogger(TransportResponseHandler.class);
@@ -64,9 +61,7 @@ public class TransportResponseHandler extends MessageHandler<ResponseMessage> {
   private final Queue<Tuple2<String, StreamCallback>> streamCallbacks;
   private volatile boolean streamActive;
 
-  /** Records the time (in system nanoseconds) that the last fetch or RPC request was sent.
-   * 记录最后一次取回或RPC请求发送的时间(在系统纳秒内)。
-   * */
+  /** Records the time (in system nanoseconds) that the last fetch or RPC request was sent. */
   private final AtomicLong timeOfLastRequestNs;
 
   public TransportResponseHandler(Channel channel) {
@@ -108,8 +103,6 @@ public class TransportResponseHandler extends MessageHandler<ResponseMessage> {
   /**
    * Fire the failure callback for all outstanding requests. This is called when we have an
    * uncaught exception or pre-mature connection termination.
-   *
-   * 对所有未处理的请求启动失败回调。当我们有一个未捕获的异常或未成熟的连接终止时，调用这个调用。
    */
   private void failOutstandingRequests(Throwable cause) {
     for (Map.Entry<StreamChunkId, ChunkReceivedCallback> entry : outstandingFetches.entrySet()) {
@@ -164,20 +157,17 @@ public class TransportResponseHandler extends MessageHandler<ResponseMessage> {
     }
   }
 
-  //以TransportResponseHandler中处理ChunkFetchSuccess响应包的处理逻辑
   @Override
   public void handle(ResponseMessage message) throws Exception {
     if (message instanceof ChunkFetchSuccess) {
       ChunkFetchSuccess resp = (ChunkFetchSuccess) message;
       ChunkReceivedCallback listener = outstandingFetches.get(resp.streamChunkId);
       if (listener == null) {
-          //没有监听的回调函数
         logger.warn("Ignoring response for block {} from {} since it is not outstanding",
           resp.streamChunkId, getRemoteAddress(channel));
         resp.body().release();
       } else {
         outstandingFetches.remove(resp.streamChunkId);
-        //回调函数，并把resp.body()对应的chunk数据返回给listener
         listener.onSuccess(resp.streamChunkId.chunkIndex, resp.body());
         resp.body().release();
       }

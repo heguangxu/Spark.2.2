@@ -37,18 +37,13 @@ import io.netty.util.internal.PlatformDependent;
  * Utilities for creating various Netty constructs based on whether we're using EPOLL or NIO.
  */
 public class NettyUtils {
-  /** Creates a new ThreadFactory which prefixes each thread with the given name.
-   * 创建一个新的ThreadFactory，它以给定的名称预先修复每个线程。
-   * */
+  /** Creates a new ThreadFactory which prefixes each thread with the given name. */
   public static ThreadFactory createThreadFactory(String threadPoolPrefix) {
     return new DefaultThreadFactory(threadPoolPrefix, true);
   }
 
-  /** Creates a Netty EventLoopGroup based on the IOMode.
-   *  创建一个基于IOMode的Netty EventLoopGroup。
-   * */
+  /** Creates a Netty EventLoopGroup based on the IOMode. */
   public static EventLoopGroup createEventLoop(IOMode mode, int numThreads, String threadPrefix) {
-    // 创建一个新的ThreadFactory，它以给定的名称预先修复每个线程。
     ThreadFactory threadFactory = createThreadFactory(threadPrefix);
 
     switch (mode) {
@@ -61,9 +56,7 @@ public class NettyUtils {
     }
   }
 
-  /** Returns the correct (client) SocketChannel class based on IOMode.
-   *  根据IOMode返回正确的(客户端)SocketChannel类。
-   * */
+  /** Returns the correct (client) SocketChannel class based on IOMode. */
   public static Class<? extends Channel> getClientChannelClass(IOMode mode) {
     switch (mode) {
       case NIO:
@@ -108,17 +101,12 @@ public class NettyUtils {
    * are disabled for TransportClients because the ByteBufs are allocated by the event loop thread,
    * but released by the executor thread rather than the event loop thread. Those thread-local
    * caches actually delay the recycling of buffers, leading to larger memory usage.
-   *
-   * 创建一个byte缓存池分配器，但是禁用线程本地缓存。由于ByteBufs是由事件循环线程分配的，
-   * 但是由executor线程释放，而不是由事件循环线程释放，所以线程本地缓存将被禁用。
-   * 这些线程本地缓存实际上延迟了缓冲区的回收，从而导致内存使用量的增加。
    */
   public static PooledByteBufAllocator createPooledByteBufAllocator(
       boolean allowDirectBufs,
       boolean allowCache,
       int numCores) {
     if (numCores == 0) {
-        // 获取运行时的可用核数
       numCores = Runtime.getRuntime().availableProcessors();
     }
     return new PooledByteBufAllocator(

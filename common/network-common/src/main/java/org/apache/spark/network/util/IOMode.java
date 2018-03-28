@@ -21,14 +21,6 @@ package org.apache.spark.network.util;
  * Selector for which form of low-level IO we should use.
  * NIO is always available, while EPOLL is only available on Linux.
  * AUTO is used to select EPOLL if it's available, or NIO otherwise.
- *
- * 我们应该使用的低级别IO的选择器。
- *
- * NIO总是可用的，而EPOLL只在Linux上可用。
- *
- * 如果它是可用的，默认选择EPOLL否则NIO。
- *
- * Spark为何使用Netty通信框架替代Akka：http://www.aboutyun.com/thread-21115-1-1.html
  */
 public enum IOMode {
   NIO, EPOLL

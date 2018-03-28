@@ -64,10 +64,6 @@ public class AuthClientBootstrap implements TransportClientBootstrap {
     // user name). All that's needed here is for this "user" to match on both sides, since that's
     // required by the protocol. At some point, though, it would be better for the actual app ID
     // to be provided here.
-      // TODO:现在这就像SASL后端一样，因为当执行器启动时。
-      // 他们不需要知道app ID，所以他们会发送一个在SecurityManager中定义的硬编码的“user”，
-      // 它也会始终返回相同的秘密(无论用户名是什么)。这里需要的是这个“用户”匹配双方，因为这是协议所要求的。
-      // 不过，在某些时候，在这里提供实际的应用程序ID会更好。
     this.appId = appId;
     this.authUser = secretKeyHolder.getSaslUser(appId);
     this.secretKeyHolder = secretKeyHolder;

@@ -24,7 +24,6 @@ import com.google.common.primitives.Ints;
 
 /**
  * A central location that tracks all the settings we expose to users.
- * 跟踪我们向用户公开的所有设置的中心位置。
  */
 public class TransportConf {
 
@@ -76,14 +75,12 @@ public class TransportConf {
     return module;
   }
 
-  /** IO mode: nio or epoll IO模式：nio 还是 epoll */
+  /** IO mode: nio or epoll */
   public String ioMode() {
     return conf.get(SPARK_NETWORK_IO_MODE_KEY, "NIO").toUpperCase(Locale.ROOT);
   }
 
-  /** If true, we will prefer allocating off-heap byte buffers within Netty.
-   * 如果是真的，我们更喜欢在Netty中分配非堆字节缓冲区。
-   * */
+  /** If true, we will prefer allocating off-heap byte buffers within Netty. */
   public boolean preferDirectBufs() {
     return conf.getBoolean(SPARK_NETWORK_IO_PREFERDIRECTBUFS_KEY, true);
   }

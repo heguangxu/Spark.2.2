@@ -24,13 +24,11 @@ import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import org.apache.spark.network.client.TransportClient;
 import org.apache.spark.network.client.TransportResponseHandler;
 import org.apache.spark.network.protocol.RequestMessage;
 import org.apache.spark.network.protocol.ResponseMessage;
 import static org.apache.spark.network.util.NettyUtils.getRemoteAddress;
-
 
 /**
  * The single Transport-level Channel handler which is used for delegating requests to the
@@ -48,10 +46,6 @@ import static org.apache.spark.network.util.NettyUtils.getRemoteAddress;
  * We consider a connection timed out if there are outstanding fetch or RPC requests but no traffic
  * on the channel for at least `requestTimeoutMs`. Note that this is duplex traffic; we will not
  * timeout if the client is continuously sending but getting no responses, for simplicity.
- *
- *
- * TransportChannelHandler内部实现也很简单，它封装了responseHandler和requestHandler，
- * 当从Netty中读取一条Message以后，根据判断路由给相应的responseHandler和requestHandler。
  */
 public class TransportChannelHandler extends ChannelInboundHandlerAdapter {
   private static final Logger logger = LoggerFactory.getLogger(TransportChannelHandler.class);

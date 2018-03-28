@@ -239,19 +239,6 @@ public class RetryingBlockFetcherSuite {
                                           BlockFetchingListener listener)
     throws IOException, InterruptedException {
 
-
-    /**
-     * spark.shuffle.io.maxRetries
-     * 默认值：3参数说明：shuffle read task从shuffle write task所在节点拉取属于自己的数据时，如果因为网络异常导致拉取失败，
-     * 是会自动进行重试的。该参数就代表了可以重试的最大次数。如果在指定次数之内拉取还是没有成功，就可能会导致作业执行失败。调优建议：
-     * 对于那些包含了特别耗时的shuffle操作的作业，建议增加重试最大次数（比如60次），以避免由于JVM的full gc或者网络不稳定等因素
-     * 导致的数据拉取失败。在实践中发现，对于针对超大数据量（数十亿~上百亿）的shuffle过程，调节该参数可以大幅度提升稳定性。
-     *
-     *
-     * spark.shuffle.io.retryWait
-     * 默认值：5s参数说明：具体解释同上，该参数代表了每次重试拉取数据的等待间隔，默认是5s。
-     * 调优建议：建议加大间隔时长（比如60s），以增加shuffle操作的稳定性。
-     */
     MapConfigProvider provider = new MapConfigProvider(ImmutableMap.of(
       "spark.shuffle.io.maxRetries", "2",
       "spark.shuffle.io.retryWait", "0"));

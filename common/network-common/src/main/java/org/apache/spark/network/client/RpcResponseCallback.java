@@ -22,22 +22,16 @@ import java.nio.ByteBuffer;
 /**
  * Callback for the result of a single RPC. This will be invoked once with either success or
  * failure.
- * 为单个RPC的结果回调。这将在一次成功或失败的情况下被调用。
  */
 public interface RpcResponseCallback {
   /**
-   * Successful serialized result from server. 成功序列化服务器返回的结果。
+   * Successful serialized result from server.
    *
    * After `onSuccess` returns, `response` will be recycled and its content will become invalid.
    * Please copy the content of `response` if you want to use it after `onSuccess` returns.
-   *
-   * 在“onSuccess”返回后，“响应”将被回收，其内容将失效。
-   * 如果您想在“onSuccess”返回后使用它，请复制“response”的内容。
    */
   void onSuccess(ByteBuffer response);
 
-  /** Exception either propagated from server or raised on client side.
-   * 异常要么从服务器传播，要么在客户端被提高。
-   * */
+  /** Exception either propagated from server or raised on client side. */
   void onFailure(Throwable e);
 }

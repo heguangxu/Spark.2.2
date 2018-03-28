@@ -49,35 +49,22 @@ import static org.apache.spark.network.util.NettyUtils.getRemoteAddress;
  * channel, in order to clean them up if the channel is terminated (see #channelUnregistered).
  *
  * The messages should have been processed by the pipeline setup by {@link TransportServer}.
- *
- * ransportRequestHandler，它封装了对所有请求/响应的处理；
- * TransportChannelHandler内部实现也很简单，它封装了responseHandler和requestHandler，
- * 当从Netty中读取一条Message以后，根据判断路由给相应的responseHandler和requestHandler。
  */
 public class TransportRequestHandler extends MessageHandler<RequestMessage> {
   private static final Logger logger = LoggerFactory.getLogger(TransportRequestHandler.class);
 
-  /** The Netty channel that this handler is associated with.
-   *  这个处理程序关联的网络通道。
-   * */
+  /** The Netty channel that this handler is associated with. */
   private final Channel channel;
 
-  /** Client on the same channel allowing us to talk back to the requester.
-   *  客户端在同一个通道上，允许我们向请求者进行反馈
-   * */
+  /** Client on the same channel allowing us to talk back to the requester. */
   private final TransportClient reverseClient;
 
-  /** Handles all RPC messages.
-   *  处理所有RPC消息。
-   * */
+  /** Handles all RPC messages. */
   private final RpcHandler rpcHandler;
 
-  /** Returns each chunk part of a stream.
-   * 返回流的每个块部分。
-   * */
+  /** Returns each chunk part of a stream. */
   private final StreamManager streamManager;
 
-  // ransportRequestHandler，它封装了对所有请求/响应的处理；
   public TransportRequestHandler(
       Channel channel,
       TransportClient reverseClient,

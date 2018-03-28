@@ -49,23 +49,17 @@ import org.apache.spark.network.util.TransportConf;
 
 /**
  * Factory for creating {@link TransportClient}s by using createClient.
- * 使用createClient创建{@link TransportClient}的工厂。
  *
  * The factory maintains a connection pool to other hosts and should return the same
  * TransportClient for the same remote host. It also shares a single worker thread pool for
  * all TransportClients.
- *
- * 工厂维护一个连接池到其他主机，并且应该返回相同的传输客户端TransportClient到相同的远程主机。
- * 它还为所有传输客户机TransportClient共享一个工作线程池。
  *
  * TransportClients will be reused whenever possible. Prior to completing the creation of a new
  * TransportClient, all given {@link TransportClientBootstrap}s will be run.
  */
 public class TransportClientFactory implements Closeable {
 
-  /** A simple data structure to track the pool of clients between two peer nodes.
-   *  一个简单的数据结构来跟踪两个对等节点之间的客户池
-   * */
+  /** A simple data structure to track the pool of clients between two peer nodes. */
   private static class ClientPool {
     TransportClient[] clients;
     Object[] locks;
@@ -86,7 +80,7 @@ public class TransportClientFactory implements Closeable {
   private final List<TransportClientBootstrap> clientBootstraps;
   private final ConcurrentHashMap<SocketAddress, ClientPool> connectionPool;
 
-  /** Random number generator for picking connections between peers. 随机数生成器在对等点之间选择连接。 */
+  /** Random number generator for picking connections between peers. */
   private final Random rand;
   private final int numConnectionsPerPeer;
 
@@ -94,21 +88,6 @@ public class TransportClientFactory implements Closeable {
   private EventLoopGroup workerGroup;
   private PooledByteBufAllocator pooledAllocator;
 
-  /**
-   * TransportClientFactory由以下部分组成：
-   *    1.clientBootstraps:用于缓存客户端列表；
-   *    2.connectionPool：用于缓存客户端连接；
-   *    3.numConnectionsPerPeer：节点之间取数据的连接数，可以使用属性spark.shuffle.io.numConnectionsPerPeer来配置。默认为1；
-   *    4.socketChannelClass：客户端channel被创建时使用的类，可以使用属性spark.shuffle.io.mode来配置，默认为NioSocketChannel;
-   *    5.workerGroup:根据Netty的规范，客户端只有work组，所以此处创建workerGroup，实际上是NioEventLoopGroup;
-   *    6.pooledAllocator:汇集ByteBuf但对本地线程存储禁用的分配器。
-   *    7.TransportClientFactory里面使用了大量的NettyUtils
-   *
-   * 提示：NIO是指Java中New IO的简称，其特点包括：为所有的原始类型提供（Buffer）缓存支持，字符集编码解码解决方案；提供
-   *      一个新的原始IO抽象Channel,支持锁和内存映射文件的访问接口，提供多路非阻塞式（non-bloking）的高可伸缩性网络IO.
-   *      其具体使用属于java语言的范畴。
-   *
-   */
   public TransportClientFactory(
       TransportContext context,
       List<TransportClientBootstrap> clientBootstraps) {
@@ -120,15 +99,11 @@ public class TransportClientFactory implements Closeable {
     this.rand = new Random();
 
     IOMode ioMode = IOMode.valueOf(conf.ioMode());
-    // 根据IOMode返回正确的(客户端)SocketChannel类。(NioSocketChannel或者EpollSocketChannel）netty权威指南-李林峰中有
     this.socketChannelClass = NettyUtils.getClientChannelClass(ioMode);
-    // 创建一个基于IOMode的Netty EventLoopGroup。主要是创建Group
     this.workerGroup = NettyUtils.createEventLoop(
         ioMode,
         conf.clientThreads(),
         conf.getModuleName() + "-client");
-
-    // 创建一个byte缓存池分配器 主要是分配byteBuf的缓存字节大小
     this.pooledAllocator = NettyUtils.createPooledByteBufAllocator(
       conf.preferDirectBufs(), false /* allowCache */, conf.clientThreads());
   }
