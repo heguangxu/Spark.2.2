@@ -76,7 +76,7 @@ import org.apache.spark.util._
  *
  * @param config a Spark Config object describing the application configuration. Any settings in
  *   this config overrides the default configs as well as system properties.
-  *   @param配置Spark配置对象描述应用程序配置。这个配置将覆盖默认的配置以及系统性能
+  *  配置Spark配置对象描述应用程序配置。这个配置将覆盖默认的配置以及系统性能
   *
   *
   *  SparkContext的初始化步骤：
@@ -959,13 +959,13 @@ class SparkContext(config: SparkConf) extends Logging {
    * @param numSlices number of partitions to divide the collection into
    * @return RDD representing distributed collection
     *
-    *   @注意Parallelize并行化行为是懒加载的。如果` SEQ `是一个可变的收集和在parallelize之后的并行化和
+    *   注意Parallelize并行化行为是懒加载的。如果` SEQ `是一个可变的收集和在parallelize之后的并行化和
     *            RDD第一个action之前改变，所得的RDD将反映修改的collection。传递参数的argument以避免这一点。
-        @注意避免使用`parallelize(Seq())`创建一个空的` RDD `。考虑'emptyRDD `是一个没有分区的RDD，
-                      或`parallelize(Seq[T]())`为` T `没有分区。
-        @param SEQ Scala并行计算集合
-        @参数分区 并行计算的分区数
-        @返回RDD代表分布式集合
+    *   注意避免使用`parallelize(Seq())`创建一个空的` RDD `。考虑'emptyRDD `是一个没有分区的RDD，
+    *                         或`parallelize(Seq[T]())`为` T `没有分区。
+    *   param seq Scala并行计算集合
+    *   参数分区 并行计算的分区数
+    *   返回RDD代表分布式集合
    */
   def parallelize[T: ClassTag](
       seq: Seq[T],
