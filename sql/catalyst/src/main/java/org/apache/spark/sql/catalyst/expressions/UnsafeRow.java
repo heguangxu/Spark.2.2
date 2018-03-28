@@ -602,7 +602,7 @@ public final class UnsafeRow extends InternalRow implements Externalizable, Kryo
     StringBuilder build = new StringBuilder("[");
     for (int i = 0; i < sizeInBytes; i += 8) {
       if (i != 0) build.append(',');
-      build.append(java.lang.Long.toHexString(Platform.getLong(baseObject, baseOffset + i)));
+      build.append(Long.toHexString(Platform.getLong(baseObject, baseOffset + i)));
     }
     build.append(']');
     return build.toString();

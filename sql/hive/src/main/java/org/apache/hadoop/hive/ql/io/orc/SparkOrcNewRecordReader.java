@@ -28,13 +28,13 @@ import java.util.List;
 
 /**
  * This is based on hive-exec-1.2.1
- * {@link org.apache.hadoop.hive.ql.io.orc.OrcNewInputFormat.OrcRecordReader}.
+ * {@link OrcNewInputFormat.OrcRecordReader}.
  * This class exposes getObjectInspector which can be used for reducing
  * NameNode calls in OrcRelation.
  */
 public class SparkOrcNewRecordReader extends
     org.apache.hadoop.mapreduce.RecordReader<NullWritable, OrcStruct> {
-  private final org.apache.hadoop.hive.ql.io.orc.RecordReader reader;
+  private final RecordReader reader;
   private final int numColumns;
   OrcStruct value;
   private float progress = 0.0f;

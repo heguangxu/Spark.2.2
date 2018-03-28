@@ -447,7 +447,7 @@ public final class ColumnarBatch {
   /**
    * Returns the row in this batch at `rowId`. Returned row is reused across calls.
    */
-  public ColumnarBatch.Row getRow(int rowId) {
+  public Row getRow(int rowId) {
     assert(rowId >= 0);
     assert(rowId < numRows);
     row.rowId = rowId;

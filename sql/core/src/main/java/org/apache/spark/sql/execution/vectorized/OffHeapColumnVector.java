@@ -230,7 +230,7 @@ public final class OffHeapColumnVector extends ColumnVector {
       long offset = data + 4 * rowId;
       for (int i = 0; i < count; ++i, offset += 4, srcOffset += 4) {
         Platform.putInt(null, offset,
-            java.lang.Integer.reverseBytes(Platform.getInt(src, srcOffset)));
+            Integer.reverseBytes(Platform.getInt(src, srcOffset)));
       }
     }
   }
@@ -288,7 +288,7 @@ public final class OffHeapColumnVector extends ColumnVector {
       long offset = data + 8 * rowId;
       for (int i = 0; i < count; ++i, offset += 8, srcOffset += 8) {
         Platform.putLong(null, offset,
-            java.lang.Long.reverseBytes(Platform.getLong(src, srcOffset)));
+            Long.reverseBytes(Platform.getLong(src, srcOffset)));
       }
     }
   }
@@ -425,7 +425,7 @@ public final class OffHeapColumnVector extends ColumnVector {
   }
 
   @Override
-  public void loadBytes(ColumnVector.Array array) {
+  public void loadBytes(Array array) {
     if (array.tmpByteArray.length < array.length) array.tmpByteArray = new byte[array.length];
     Platform.copyMemory(
         null, data + array.offset, array.tmpByteArray, Platform.BYTE_ARRAY_OFFSET, array.length);

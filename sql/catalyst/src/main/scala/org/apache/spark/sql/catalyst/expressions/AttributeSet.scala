@@ -17,7 +17,6 @@
 
 package org.apache.spark.sql.catalyst.expressions
 
-
 protected class AttributeEquals(val a: Attribute) {
   override def hashCode(): Int = a match {
     case ar: AttributeReference => ar.exprId.hashCode()

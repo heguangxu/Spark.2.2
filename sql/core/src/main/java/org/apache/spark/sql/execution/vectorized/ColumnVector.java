@@ -625,7 +625,7 @@ public abstract class ColumnVector implements AutoCloseable {
    */
   public final UTF8String getUTF8String(int rowId) {
     if (dictionary == null) {
-      ColumnVector.Array a = getByteArray(rowId);
+      Array a = getByteArray(rowId);
       return UTF8String.fromBytes(a.byteArray, a.byteArrayOffset, a.length);
     } else {
       Binary v = dictionary.decodeToBinary(dictionaryIds.getDictId(rowId));
@@ -638,7 +638,7 @@ public abstract class ColumnVector implements AutoCloseable {
    */
   public final byte[] getBinary(int rowId) {
     if (dictionary == null) {
-      ColumnVector.Array array = getByteArray(rowId);
+      Array array = getByteArray(rowId);
       byte[] bytes = new byte[array.length];
       System.arraycopy(array.byteArray, array.byteArrayOffset, bytes, 0, bytes.length);
       return bytes;

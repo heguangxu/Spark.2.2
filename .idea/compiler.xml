@@ -34,6 +34,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="spark-assembly_2.11" target="1.5" />
       <module name="spark-catalyst_2.11" target="1.8" />
       <module name="spark-core_2.11" target="1.8" />
       <module name="spark-examples_2.11" target="1.8" />

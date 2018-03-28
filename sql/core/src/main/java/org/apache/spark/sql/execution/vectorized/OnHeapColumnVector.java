@@ -220,7 +220,7 @@ public final class OnHeapColumnVector extends ColumnVector {
     for (int i = 0; i < count; ++i, srcOffset += 4) {
       intData[i + rowId] = Platform.getInt(src, srcOffset);
       if (bigEndianPlatform) {
-        intData[i + rowId] = java.lang.Integer.reverseBytes(intData[i + rowId]);
+        intData[i + rowId] = Integer.reverseBytes(intData[i + rowId]);
       }
     }
   }
@@ -272,7 +272,7 @@ public final class OnHeapColumnVector extends ColumnVector {
     for (int i = 0; i < count; ++i, srcOffset += 8) {
       longData[i + rowId] = Platform.getLong(src, srcOffset);
       if (bigEndianPlatform) {
-        longData[i + rowId] = java.lang.Long.reverseBytes(longData[i + rowId]);
+        longData[i + rowId] = Long.reverseBytes(longData[i + rowId]);
       }
     }
   }
@@ -386,7 +386,7 @@ public final class OnHeapColumnVector extends ColumnVector {
   }
 
   @Override
-  public void loadBytes(ColumnVector.Array array) {
+  public void loadBytes(Array array) {
     array.byteArray = byteData;
     array.byteArrayOffset = array.offset;
   }

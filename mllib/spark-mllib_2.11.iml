@@ -75,7 +75,6 @@
     <orderEntry type="module" module-name="spark-network-shuffle_2.11" />
     <orderEntry type="module" module-name="spark-unsafe_2.11" />
     <orderEntry type="library" name="Maven: net.java.dev.jets3t:jets3t:0.9.3" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.4" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.2" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.10" level="project" />
     <orderEntry type="library" name="Maven: javax.activation:activation:1.1.1" level="project" />
@@ -169,6 +168,7 @@
     <orderEntry type="library" name="Maven: org.apache.parquet:parquet-hadoop:1.8.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.parquet:parquet-format:2.3.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.parquet:parquet-jackson:1.8.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.4" level="project" />
     <orderEntry type="module" module-name="spark-graphx_2.11" />
     <orderEntry type="library" name="Maven: com.github.fommil.netlib:core:1.1.2" level="project" />
     <orderEntry type="library" name="Maven: net.sourceforge.f2j:arpack_combined_all:0.1" level="project" />

@@ -113,7 +113,7 @@ public class VectorizedPlainValuesReader extends ValuesReader implements Vectori
   public final int readInteger() {
     int v = Platform.getInt(buffer, offset);
     if (bigEndianPlatform) {
-      v = java.lang.Integer.reverseBytes(v);
+      v = Integer.reverseBytes(v);
     }
     offset += 4;
     return v;
@@ -123,7 +123,7 @@ public class VectorizedPlainValuesReader extends ValuesReader implements Vectori
   public final long readLong() {
     long v = Platform.getLong(buffer, offset);
     if (bigEndianPlatform) {
-      v = java.lang.Long.reverseBytes(v);
+      v = Long.reverseBytes(v);
     }
     offset += 8;
     return v;

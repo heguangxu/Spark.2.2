@@ -576,7 +576,7 @@ public class JavaDatasetSuite implements Serializable {
   public static class SimpleJavaBean2 implements Serializable {
     private Timestamp a;
     private Date b;
-    private java.math.BigDecimal c;
+    private BigDecimal c;
 
     public Timestamp getA() { return a; }
 
@@ -586,9 +586,9 @@ public class JavaDatasetSuite implements Serializable {
 
     public void setB(Date b) { this.b = b; }
 
-    public java.math.BigDecimal getC() { return c; }
+    public BigDecimal getC() { return c; }
 
-    public void setC(java.math.BigDecimal c) { this.c = c; }
+    public void setC(BigDecimal c) { this.c = c; }
 
     @Override
     public boolean equals(Object o) {
@@ -727,7 +727,7 @@ public class JavaDatasetSuite implements Serializable {
     SimpleJavaBean2 obj = new SimpleJavaBean2();
     obj.setA(new Timestamp(0));
     obj.setB(new Date(0));
-    obj.setC(java.math.BigDecimal.valueOf(1));
+    obj.setC(BigDecimal.valueOf(1));
     Dataset<SimpleJavaBean2> ds =
       spark.createDataset(Arrays.asList(obj), Encoders.bean(SimpleJavaBean2.class));
     ds.collect();

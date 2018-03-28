@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/assembly/spark-assembly_2.11.iml" filepath="$PROJECT_DIR$/assembly/spark-assembly_2.11.iml" />
       <module fileurl="file://$PROJECT_DIR$/sql/catalyst/spark-catalyst_2.11.iml" filepath="$PROJECT_DIR$/sql/catalyst/spark-catalyst_2.11.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/spark-core_2.11.iml" filepath="$PROJECT_DIR$/core/spark-core_2.11.iml" />
       <module fileurl="file://$PROJECT_DIR$/examples/spark-examples_2.11.iml" filepath="$PROJECT_DIR$/examples/spark-examples_2.11.iml" />
