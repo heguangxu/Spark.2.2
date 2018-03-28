@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ivy-report.xsl"?>
+<ivy-report version="1.0">
+	<info
+		organisation="org.apache.spark"
+		module="spark-catalyst_2.11"
+		revision="2.2.0"
+		conf="antlr4"
+		confs="compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom, scala-tool, antlr4"
+		date="20171202152707"/>
+	<dependencies>
+		<module organisation="org.antlr" name="antlr4">
+			<revision name="4.5.3" status="release" pubdate="20160331073556" resolver="public" artresolver="public" homepage="" downloaded="true" searched="true" default="false" conf="default, compile, runtime, default(compile), master" position="0">
+				<license name="The BSD License" url="http://www.antlr.org/license.html"/>
+				<metadata-artifact status="successful" details="" size="4746" time="1144" location="C:\Users\lcc\.ivy2\cache\org.antlr\antlr4\ivy-4.5.3.xml" searched="true" original-local-location="C:\Users\lcc\.ivy2\cache\org.antlr\antlr4\ivy-4.5.3.xml.original" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/antlr/antlr4/4.5.3/antlr4-4.5.3.pom"/>
+				<caller organisation="org.apache.spark" name="spark-catalyst_2.11" conf="antlr4" rev="4.5.3" rev-constraint-default="4.5.3" rev-constraint-dynamic="4.5.3" callerrev="2.2.0"/>
+				<artifacts>
+					<artifact name="antlr4" type="jar" ext="jar" status="successful" details="" size="1485121" time="30401" location="C:\Users\lcc\.ivy2\cache\org.antlr\antlr4\jars\antlr4-4.5.3.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/antlr/antlr4/4.5.3/antlr4-4.5.3.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+	</dependencies>
+</ivy-report>
