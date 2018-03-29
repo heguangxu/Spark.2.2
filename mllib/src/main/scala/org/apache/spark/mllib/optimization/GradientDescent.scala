@@ -30,14 +30,25 @@ import org.apache.spark.rdd.RDD
 /**
  * Class used to solve an optimization problem using Gradient Descent.
  * @param gradient Gradient function to be used.
+  *                 这个类是用来计算要被优化的函数的随机梯度（如：相对单一训练样本当前的参数值）
+  *                 MLlib包含常见的损失函数（hinge,logistic,least-squares）的梯度类。梯度类将训练样本，
+  *                 标签，以及当前的参数值作为输入值。
  * @param updater Updater to be used to update weights after every iteration.
+  *                是在梯度下降的每一次迭代中更新权重的类。MLlib包含适用于无正则项，L1正则项和L2正则项3中
+  *                情况下的类。
+  *
+  *
  */
 class GradientDescent private[spark] (private var gradient: Gradient, private var updater: Updater)
   extends Optimizer with Logging {
 
+  // 是一个表示梯度下降初始步长的数值。MLlib中所有的更新器第t步的步长等于stepSize/sqrt(t)
   private var stepSize: Double = 1.0
+  // 表示迭代的次数
   private var numIterations: Int = 100
+  // 是在使用L1,L2正则项时的正则化参数
   private var regParam: Double = 0.0
+  // 每一次迭代中用来计算梯度的数据百分比
   private var miniBatchFraction: Double = 1.0
   private var convergenceTol: Double = 0.001
 

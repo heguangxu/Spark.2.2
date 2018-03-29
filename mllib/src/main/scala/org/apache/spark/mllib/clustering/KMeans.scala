@@ -38,6 +38,14 @@ import org.apache.spark.util.random.XORShiftRandom
  *
  * This is an iterative algorithm that will make multiple passes over the data, so any RDDs given
  * to it should be cached by the user.
+  *
+  *
+  * 参数说明：
+  *   K:是所需的类簇的个数
+  *   maxIterations:是最大的迭代次数
+  *   initializationMode:这个参数决定了是用随机初始化还是通过k-means|| 进行初始化
+  *   initializationSteps：决定了k-means|| 算法的步数
+  *
  */
 @Since("0.8.0")
 class KMeans private (
