@@ -55,6 +55,7 @@ import org.apache.spark.internal.Logging
   * 以前的sparkUI中只有stage的执行情况，也就是说我们不可以看到上个RDD到下个RDD的具体信息。于是为了在
   * sparkUI中能展示更多的信息。所以把所有创建的RDD的方法都包裹起来，同时用RDDOperationScope 记录 RDD 的操作历史和关联，就能达成目标。
   *
+  * 参考博客：https://blog.csdn.net/qq_21383435/article/details/79666170
  */
 @JsonInclude(Include.NON_NULL)
 @JsonPropertyOrder(Array("id", "name", "parent"))
