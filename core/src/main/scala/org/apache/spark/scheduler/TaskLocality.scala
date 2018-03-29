@@ -34,7 +34,8 @@ object TaskLocality extends Enumeration {
 /**
   * 什么是NO_PREF？
   *   当Driver应用程序刚刚启动，Driver分配获得的Executor很可能还没有初始化完毕。所以会有一部分任务的本地化级别被设置为NO_PREF,
-  * 如果是ShuffleRDD，其本地行始终为NO_PREF,对于这两种本地化级别是NO_PREF的情况，在任务分配时会被优先分配到非本地节点执行，达到一定的优化效果。
+  * 如果是ShuffleRDD，其本地行始终为NO_PREF,对于这两种本地化级别是NO_PREF的情况，在任务分配时会被优先分配到非本地节点执行，
+  * 达到一定的优化效果。
   *
   * PROCESS_LOCAL: 数据在同一个 JVM 中，即同一个 executor 上。这是最佳数据 locality。
   *

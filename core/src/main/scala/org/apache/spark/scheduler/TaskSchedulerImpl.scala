@@ -229,10 +229,32 @@ private[spark] class TaskSchedulerImpl private[scheduler](
     // StandLone模式：调用的是StandaloneSchedulerBackend.start()方法，
     backend.start()
 
+    /**
+      * TaskScheduleImpl的初始化和启动是在SparkConext中，进行的，初始化的时候会
+      * 传入SparkDeploySchedulerBackend对象。启动则直接调用start方法。在Start
+      * 方法中，会判断是否启动任务的推测执行，由spark.speculation属性指定，默认不执行。
+      * 问题：推测执行，是什么？
+      *
+      *     推测执行(Speculative Execution)是指在分布式集群环境下，因为程序BUG，
+      *   负载不均衡或者资源分布不均等原因，造成同一个job的多个task运行速度不一致，
+      *   有的task运行速度明显慢于其他task（比如：一个job的某个task进度只有10%，
+      *   而其他所有task已经运行完毕），则这些task拖慢了作业的整体执行进度，为了避
+      *   免这种情况发生，Hadoop会为该task启动备份任务，让该speculative task与
+      *   原始task同时处理一份数据，哪个先运行完，则将谁的结果作为最终结果。
+      *
+      *     推测执行优化机制采用了典型的以空间换时间的优化策略，它同时启动多个相同task
+      *   （备份任务）处理相同的数据块，哪个完成的早，则采用哪个task的结果，这样可防止
+      *   拖后腿Task任务出现，进而提高作业计算速度，但是，这样却会占用更多的资源，在集
+      *   群资源紧缺的情况下，设计合理的推测执行机制可在多用少量资源情况下，减少大作业的
+      *   计算时间。
+      *
+      *   参考博客：https://blog.csdn.net/qq_21383435/article/details/79749459
+      */
     if (!isLocal && conf.getBoolean("spark.speculation", false)) {
       logInfo("Starting speculative execution thread")
       speculationScheduler.scheduleWithFixedDelay(new Runnable {
         override def run(): Unit = Utils.tryOrStopSparkContext(sc) {
+          // 检查我们所有活跃的job中是否有可推测的任务。
           checkSpeculatableTasks()
         }
       }, SPECULATION_INTERVAL_MS, SPECULATION_INTERVAL_MS, TimeUnit.MILLISECONDS)
@@ -707,10 +729,19 @@ private[spark] class TaskSchedulerImpl private[scheduler](
 
   override def defaultParallelism(): Int = backend.defaultParallelism()
 
-  // Check for speculatable tasks in all our active jobs.
+  /** Check for speculatable tasks in all our active jobs.
+      // 检查我们所有活跃的job中是否有可推测的任务。
+      若开启则会启动一个线程每隔`SPECULATION_INTERVAL_MS`（默认100ms，可通过
+      `spark.speculation.interval`属性设置）通过`checkSpeculatableTasks`
+      方法检测是否有需要推测式执行的tasks：
+    */
   def checkSpeculatableTasks() {
     var shouldRevive = false
     synchronized {
+      /**
+        * 然后又通过rootPool的方法判断是否有需要推测式执行的tasks，若有则会调用
+        * SchedulerBackend的reviveOffers去尝试拿资源运行推测任务。
+        */
       shouldRevive = rootPool.checkSpeculatableTasks(MIN_TIME_TO_SPECULATION)
     }
     if (shouldRevive) {

@@ -94,6 +94,12 @@ private[spark] class Pool(
     schedulableQueue.asScala.foreach(_.executorLost(executorId, host, reason))
   }
 
+  /**
+    *   在rootPool里又调用了schedulable的方法，schedulable是ConcurrentLinkedQueue[Schedulable]类型，
+    * 队列里面放的都是TaskSetMagager，再看TaskSetMagager的checkSpeculatableTasks方法，终于找到检测根源了：
+    * @param minTimeToSpeculation
+    * @return
+    */
   override def checkSpeculatableTasks(minTimeToSpeculation: Int): Boolean = {
     var shouldRevive = false
     for (schedulable <- schedulableQueue.asScala) {

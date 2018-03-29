@@ -147,7 +147,7 @@ private[deploy] class DriverRunner(
     * Creates the working directory for this driver.
     * Will throw an exception if there are errors preparing the directory.
     *
-    * 为该驱动程序创建工作目录。
+    * 为该驱动程序创建工作目录。创建Driver的工作目录
     * 如果在准备目录时出现错误，将抛出异常。
     */
   private def createWorkingDirectory(): File = {

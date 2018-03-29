@@ -430,9 +430,15 @@ private[spark] class TaskSetManager(
   protected def dequeueSpeculativeTask(execId: String, host: String, locality: TaskLocality.Value)
     : Option[(Int, TaskLocality.Value)] =
   {
+    // 从推测式执行任务列表中移除已经成功完成的task，因为从检测到调度之间还有一段时间，
+    // 某些task已经成功执行
     // 从set集合中删除完成的任务
     speculatableTasks.retain(index => !successful(index)) // Remove finished tasks from set
 
+
+    // 判断task是否可以在该executor对应的Host上执行，判断条件是：
+    // task没有在该host上运行；
+    // 该executor没有在task的黑名单里面（task在这个executor上失败过，并还在'黑暗'时间内）
     def canRunOnHost(index: Int): Boolean = {
       !hasAttemptOnHost(index, host) &&
         !isTaskBlacklistedOnExecOrNode(index, execId, host)
@@ -442,12 +448,17 @@ private[spark] class TaskSetManager(
     if (!speculatableTasks.isEmpty) {
       // Check for process-local tasks; note that tasks can be process-local
       // on multiple nodes when we replicate cached blocks, as in Spark Streaming
+      // 获取能在该executor上启动的taskIndex
       for (index <- speculatableTasks if canRunOnHost(index)) {
+        // 获取task的优先位置
         val prefs = tasks(index).preferredLocations
         val executors = prefs.flatMap(_ match {
           case e: ExecutorCacheTaskLocation => Some(e.executorId)
           case _ => None
         });
+
+        // 优先位置若为ExecutorCacheTaskLocation并且数据所在executor包含当前executor，
+        // 则返回其task在taskSet的index和Locality Levels
         if (executors.contains(execId)) {
           speculatableTasks -= index
           return Some((index, TaskLocality.PROCESS_LOCAL))
@@ -455,6 +466,7 @@ private[spark] class TaskSetManager(
       }
 
       // Check for node-local tasks
+      // 这里的判断是延迟调度的作用，即使是推测式任务也尽量以最好的本地性级别来启动
       if (TaskLocality.isAllowed(locality, TaskLocality.NODE_LOCAL)) {
         for (index <- speculatableTasks if canRunOnHost(index)) {
           val locations = tasks(index).preferredLocations.map(_.host)
@@ -504,22 +516,30 @@ private[spark] class TaskSetManager(
   /**
    * Dequeue a pending task for a given node and return its index and locality level.
    * Only search for tasks matching the given locality constraint.
+    *
+    * 将给定节点的挂起任务删除，并返回其索引和位置级别。只搜索与给定区域约束匹配的任务。
    *
    * @return An option containing (task index within the task set, locality, is speculative?)
+    *         包含(任务集中的任务索引，地点，是推测的?)
    */
   private def dequeueTask(execId: String, host: String, maxLocality: TaskLocality.Value)
     : Option[(Int, TaskLocality.Value, Boolean)] =
   {
+    // dequeueTaskFromList()方法：从给定的列表中取消一个挂起的任务并返回它的索引。如果列表为空，则返回None。
+    // PROCESS_LOCAL: 数据在同一个 JVM 中，即同一个 executor 上。这是最佳数据 locality。
     for (index <- dequeueTaskFromList(execId, host, getPendingTasksForExecutor(execId))) {
       return Some((index, TaskLocality.PROCESS_LOCAL, false))
     }
 
+    // NODE_LOCAL: 数据在同一个节点上。比如数据在同一个节点的另一个 executor上；或在 HDFS 上，
+    // 恰好有 block 在同一个节点上。速度比 PROCESS_LOCAL 稍慢，因为数据需要在不同进程之间传递或从文件中读取
     if (TaskLocality.isAllowed(maxLocality, TaskLocality.NODE_LOCAL)) {
       for (index <- dequeueTaskFromList(execId, host, getPendingTasksForHost(host))) {
         return Some((index, TaskLocality.NODE_LOCAL, false))
       }
     }
 
+    // NO_PREF: 数据从哪里访问都一样快，不需要位置优先
     if (TaskLocality.isAllowed(maxLocality, TaskLocality.NO_PREF)) {
       // Look for noPref tasks after NODE_LOCAL for minimize cross-rack traffic
       for (index <- dequeueTaskFromList(execId, host, pendingTasksWithNoPrefs)) {
@@ -527,6 +547,7 @@ private[spark] class TaskSetManager(
       }
     }
 
+    // RACK_LOCAL: 数据在同一机架的不同节点上。需要通过网络传输数据及文件 IO，比 NODE_LOCAL 慢
     if (TaskLocality.isAllowed(maxLocality, TaskLocality.RACK_LOCAL)) {
       for {
         rack <- sched.getRackForHost(host)
@@ -536,6 +557,7 @@ private[spark] class TaskSetManager(
       }
     }
 
+    // ANY: 数据在非同一机架的网络上，速度最慢
     if (TaskLocality.isAllowed(maxLocality, TaskLocality.ANY)) {
       for (index <- dequeueTaskFromList(execId, host, allPendingTasks)) {
         return Some((index, TaskLocality.ANY, false))
@@ -543,6 +565,7 @@ private[spark] class TaskSetManager(
     }
 
     // find a speculative task if all others tasks have been scheduled
+    // 如果所有其他任务都安排好了，就去找一个推测的任务。
     dequeueSpeculativeTask(execId, host, maxLocality).map {
       case (taskIndex, allowedLocality) => (taskIndex, allowedLocality, true)}
   }
@@ -1124,20 +1147,28 @@ private[spark] class TaskSetManager(
   override def checkSpeculatableTasks(minTimeToSpeculation: Int): Boolean = {
     // Can't speculate if we only have one task, and no need to speculate if the task set is a
     // zombie.
+    // 如果task只有一个或者所有task都不需要再执行了就没有必要再检测
     if (isZombie || numTasks == 1) {
       return false
     }
     var foundTasks = false
+    // 所有task数 * SPECULATION_QUANTILE（默认0.75，可通过spark.speculation.quantile设置）
     val minFinishedForSpeculation = (SPECULATION_QUANTILE * numTasks).floor.toInt
     logDebug("Checking for speculative tasks: minFinished = " + minFinishedForSpeculation)
 
+    // 成功的task数是否超过总数的75%，并且成功的task是否大于0
     if (tasksSuccessful >= minFinishedForSpeculation && tasksSuccessful > 0) {
       val time = clock.getTimeMillis()
+      // 取这多个task任务执行成功时间的中位数
       var medianDuration = successfulTaskDurations.median
+      // 中位数 * SPECULATION_MULTIPLIER （默认1.5，可通过spark.speculation.multiplier设置）
       val threshold = max(SPECULATION_MULTIPLIER * medianDuration, minTimeToSpeculation)
       // TODO: Threshold should also look at standard deviation of task durations and have a lower
       // bound based on that.
       logDebug("Task length threshold for speculation: " + threshold)
+
+      // 遍历该TaskSet中的task，取未成功执行、正在执行、执行时间已经大于threshold 、
+      // 推测式执行task列表中未包括的task放进需要推测式执行的列表中speculatableTasks
       for (tid <- runningTasksSet) {
         val info = taskInfos(tid)
         val index = info.index
