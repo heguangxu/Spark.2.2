@@ -674,6 +674,13 @@ class DAGScheduler(
     *
     *   如何判断Stage可用？他的判断十分简单：如果Stage不是Map任务，那么它是可用的；
     *  否则它的已经输出计算结果的分区任务数量要和分区数一样，即所有分区上的子任务都要完成。
+    *
+    *  寻找父Stage的方法。首先根据当前Stage中的RDD，得到RDD的一阿里关系。如果依赖关系是宽依赖，则生成一个
+    *  mapSrtage来作为当前Stage的父Stage（因为有个多父亲，肯定要用map来存储）。如果依赖关系是窄依赖，不会
+    *  生成新的Stage.
+    *
+    *  对于不需要Shuffle操作的Job，他只需要一个finalStage,对于需要Shuffle操作dejob，会生成mapStage和
+    *  finalStage这两种Stage.
     */
   private def getMissingParentStages(stage: Stage): List[Stage] = {
     val missing = new HashSet[Stage]
@@ -1261,6 +1268,20 @@ class DAGScheduler(
     * 取未执行的Parent Stage。
     *
     * 如果当前Stage满足上述两个条件后，调用DAGScheduler.submitMissingTasks方法，提交当前Stage。
+    *
+    *
+    * ===>
+    *   这一步主要是计算stage之间的依赖关系（Stage DAG）并且对依赖关系进行处理，首先寻找父Stage,如果没有，说明
+    * 当前的Stage的所有依赖都已经准备完毕，则提交Task，病将当前的Stage放入runningStages中，进入下一步。如果有父
+    * Stage，则需要先提交父Stage,并且把当前的Stage放入等待队列中，因为当前Stage的执行时依赖前面的Stage的，可见，
+    * Stage调度室从后往前找所以来的各个Stage。
+    *
+    * 打个比方：
+    *   我想找一个 从你十八代祖宗到你的一条血缘线
+    *   你爷爷 --》 你爸爸 --》你
+    *   类似于把这个关系放到队列结构中
+    *
+    *
     * */
   private def submitStage(stage: Stage) {
     // 获取当前提交Stage所属的Job
@@ -1277,7 +1298,7 @@ class DAGScheduler(
         //如果所有的parent stage都以及完成，那么就会提交该stage所包含的task
         if (missing.isEmpty) {  ////找到了第一个Stage，其ParentStages为Empty，则提交这个Stage的task
           logInfo("Submitting " + stage + " (" + stage.rdd + "), which has no missing parents")
-          //过程见下面的方法描述
+          /** 任务的提交  */
           submitMissingTasks(stage, jobId.get)
         } else {
           //否则递归的去提交未完成的parent stage
@@ -1300,7 +1321,12 @@ class DAGScheduler(
     * 当找到了第一个Stage之后，会开始提交这个Stage的task
     *
     * 5.4.5 提交Task
-    *   提交Task的入口是submitMissingTasks函数，此函数在Stage没有不可用的祖先Stage时候，被调用处理当前Stage未提交的任务。
+    *   提交Task的入口是submitMissingTasks函数，此函数在Stage没有不可用的祖先Stage时候，
+    *   被调用处理当前Stage未提交的任务。
+    *
+    *   它主要根据当前Stage所以来的RDD的partition的分布，产生和partition数量相等的Task,
+    *   如果当前的Stage是MapStage类型，则产生ShuffleMapTask，否则产生ResultTask，Task
+    *   的位置都是经过getPreferedLocs方法计算得到的最佳位置。
     *
     *   1.提交还未计算的任务
     *
@@ -1311,17 +1337,20 @@ class DAGScheduler(
     *
     *     submitMissingTasks执行过程总结如下：
     *     （1）.清空pendingTasks，由于当前Stage的任务刚开始提交，所以需要清空，便于记录需要计算的任务。
-    *     （2）.找出还未计算的partition(如果Stage是map任务，那么需要获取Stage的finalJob，并且调用finished方法判断每个partition
+    *     （2）.找出还未计算的partition(如果Stage是map任务，那么需要获取Stage的finalJob，并且调用
+    *           finished方法判断每个partition
     *           的任务是否完成)
     *     （3）.将当前Stage加入运行中的Stage集合（runningStages:HashSet[stage]）中。
     *     （4）.使用StageInfo。fromStage方法创建当前Stage的latestInfo(StageInfo)
     *     （5）.向listenerBus发送SparkListenerStageSubmitted事件。
-    *     （6）.如果Stage是map任务，那么序列化Stage的RDD及ShuffleDependency,如果Stage不是Map任务，那么序列化Stage的RDD及resultOfJob
+    *     （6）.如果Stage是map任务，那么序列化Stage的RDD及ShuffleDependency,如果Stage不是Map任务，
+    *           那么序列化Stage的RDD及resultOfJob
     *           的处理函数，这些序列化得到的字节数组最后需要使用sc.broadcast进行广播。
-    *     （7）.如果Stage是map任务，则创建ShuffleMapTask，否则创建ResultTask，还未计算的partition个数决定了最终创建的Task
+    *     （7）.如果Stage是map任务，则创建ShuffleMapTask，否则创建ResultTask，还未计算的partition
+    *           个数决定了最终创建的Task
     *           个数。并将创建的所有Task都添加到Stage的pendingTasks中。
-    *     （8）.利用上一步创建的所有Task，当前Stage的id，jobId等信息创建TaskSet，并调用taskScheduler的submitTasks，批量提交Stage
-    *           及其所有的Task.
+    *     （8）.利用上一步创建的所有Task，当前Stage的id，jobId等信息创建TaskSet，并调用taskScheduler
+    *           的submitTasks，批量提交Stage及其所有的Task.
     *
     * */
   private def submitMissingTasks(stage: Stage, jobId: Int) {
@@ -2108,11 +2137,13 @@ class DAGScheduler(
       return Nil
     }
     // If the partition is cached, return the cache locations
+    // 如果RDD分区被缓存了，就返回缓存的位置
     val cached = getCacheLocs(rdd)(partition)
     if (cached.nonEmpty) {
       return cached
     }
     // If the RDD has some placement preferences (as is the case for input RDDs), get those
+    // 如果RDD被checkpoint过
     val rddPrefs = rdd.preferredLocations(rdd.partitions(partition)).toList
     if (rddPrefs.nonEmpty) {
       return rddPrefs.map(TaskLocation(_))
@@ -2121,6 +2152,7 @@ class DAGScheduler(
     // If the RDD has narrow dependencies, pick the first partition of the first narrow dependency
     // that has any placement preferences. Ideally we would choose based on transfer sizes,
     // but this will do for now.
+    // 递归查找具有依赖关系的RDD分区位置信息，仅当窄依赖时
     rdd.dependencies.foreach {
       case n: NarrowDependency[_] =>
         for (inPart <- n.getParents(partition)) {

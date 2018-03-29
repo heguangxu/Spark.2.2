@@ -76,8 +76,10 @@ private[deploy] class ExecutorRunner(
   private[worker] def start() {
     /**
       * 新创建一个线程 下载并运行在我们的ApplicationDescription中描述的executor
+      * fullId的格式为：appId+"/"+execId
       */
     workerThread = new Thread("ExecutorRunner for " + fullId) {
+      // 这个run方法实际上调用的是ExecutorRunner中的fetchAndRunExecutor方法
       override def run() {
         // 新创建一个线程 下载并运行在我们的ApplicationDescription中描述的executor
         fetchAndRunExecutor()
@@ -178,6 +180,7 @@ private[deploy] class ExecutorRunner(
   private def fetchAndRunExecutor() {
     try {
       // Launch the process
+      // 将Executor相关的启动信息封装成Comman对象
       val builder = CommandUtils.buildProcessBuilder(appDesc.command, new SecurityManager(conf),
         memory, sparkHome.getAbsolutePath, substituteVariables)
 

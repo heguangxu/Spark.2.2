@@ -414,6 +414,7 @@ private[deploy] class Master(
       */
     case ExecutorStateChanged(appId, execId, state, message, exitStatus) =>
       // 通过idToApp获得app，然后通过app获得executors，从而通过execId获得executor
+      // 根据ExecutorId和ApplicationId找到对应的信息
       val execOption = idToApp.get(appId).flatMap(app => app.executors.get(execId))
       execOption match {
         case Some(exec) =>
@@ -427,7 +428,7 @@ private[deploy] class Master(
             appInfo.resetRetryCount()
           }
 
-          // 这个又是发送给谁的呢？
+          // 这个又是发送给谁的呢？发给Application对应的Driver
           exec.application.driver.send(ExecutorUpdated(execId, state, message, exitStatus, false))
 
           /**

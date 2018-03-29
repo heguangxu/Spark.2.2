@@ -156,6 +156,7 @@ private[deploy] class DriverRunner(
     if (!driverDir.exists() && !driverDir.mkdirs()) {
       throw new IOException("Failed to create directory " + driverDir)
     }
+    // 目录的名称就是driverId
     driverDir
   }
 
@@ -193,7 +194,8 @@ private[deploy] class DriverRunner(
   private[worker] def prepareAndRunDriver(): Int = {
     // 创建Driver的工作目录
     val driverDir = createWorkingDirectory()
-    // 将用户jar下载到所提供的目录并返回其本地路径。
+    // 将用户jar下载到所提供的目录并返回其本地路径。下载程序相关的依赖文件，在DriverDescription中会有依赖
+    // 文件的url,spark这里直接使用hadoop的一个工具FileUtil，利用其copy方法将依赖文件复制到本地。
     val localJarFilename = downloadUserJar(driverDir)
 
     def substituteVariables(argument: String): String = argument match {

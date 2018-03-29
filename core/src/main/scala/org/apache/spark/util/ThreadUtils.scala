@@ -50,6 +50,8 @@ private[spark] object ThreadUtils {
   /**
    * Wrapper over newCachedThreadPool. Thread names are formatted as prefix-ID, where ID is a
    * unique, sequentially assigned integer.
+    * 在newCachedThreadPool包装器。线程名称被格式化为prefix-ID，其中ID是一个惟一的、顺序分配的整数。
+    * 线程池的定义
    */
   def newDaemonCachedThreadPool(prefix: String): ThreadPoolExecutor = {
     val threadFactory = namedThreadFactory(prefix)
