@@ -109,6 +109,8 @@ object PartitionStrategy {
   /**
    * Assigns edges to partitions by hashing the source and destination vertex IDs, resulting in a
    * random vertex cut that colocates all same-direction edges between two vertices.
+    *
+    * RandomVertexCut是通过对源定点ID和目标定点ID计算hash运算来实现的。
    */
   case object RandomVertexCut extends PartitionStrategy {
     override def getPartition(src: VertexId, dst: VertexId, numParts: PartitionID): PartitionID = {

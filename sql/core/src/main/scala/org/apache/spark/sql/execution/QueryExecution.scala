@@ -77,6 +77,7 @@ class QueryExecution(val sparkSession: SparkSession, val logical: LogicalPlan) {
 
   lazy val optimizedPlan: LogicalPlan = sparkSession.sessionState.optimizer.execute(withCachedData)
 
+  //  将optimized logicalPlan转换成PhysicalPlan
   lazy val sparkPlan: SparkPlan = {
     SparkSession.setActiveSession(sparkSession)
     // TODO: We use next(), i.e. take the first plan returned by the planner, here for now,
@@ -86,9 +87,18 @@ class QueryExecution(val sparkSession: SparkSession, val logical: LogicalPlan) {
 
   // executedPlan should not be used to initialize any SparkPlan. It should be
   // only used for execution.
+  //
+  // 不应该使用executedPlan初始化任何SparkPlan。它应该只用于执行。
+  // PhysicalPlan执行前的准备工作，生成可执行的物理计划
+  //
   lazy val executedPlan: SparkPlan = prepareForExecution(sparkPlan)
 
-  /** Internal version of the RDD. Avoids copies and has no schema */
+  /** Internal version of the RDD. Avoids copies and has no schema
+    * 内部版本的RDD。避免复制和没有模式。
+    *
+    * 执行可执行的物理计划
+    *
+    * */
   lazy val toRdd: RDD[InternalRow] = executedPlan.execute()
 
   /**

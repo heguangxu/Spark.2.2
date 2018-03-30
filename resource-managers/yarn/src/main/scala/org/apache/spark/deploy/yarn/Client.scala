@@ -729,6 +729,7 @@ private[spark] class Client(
 
   /**
    * Set up the environment for launching our ApplicationMaster container.
+    * 为启动我们的ApplicationMaster容器设置环境。
    */
   private def setupLaunchEnv(
       stagingDirPath: Path,
@@ -798,6 +799,8 @@ private[spark] class Client(
   /**
    * Set up a ContainerLaunchContext to launch our ApplicationMaster container.
    * This sets up the launch environment, java options, and the command for launching the AM.
+    *
+    * 设置一个ContainerLaunchContext来启动我们的ApplicationMaster容器。这将设置启动环境、java选项和启动AM的命令。
    */
   private def createContainerLaunchContext(newAppResponse: GetNewApplicationResponse)
     : ContainerLaunchContext = {

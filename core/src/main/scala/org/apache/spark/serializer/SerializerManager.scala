@@ -64,6 +64,10 @@ private[spark] class SerializerManager(
   // 是否压缩存储的广播变量
   private[this] val compressBroadcast = conf.getBoolean("spark.broadcast.compress", true)
   // Whether to compress shuffle output that are stored 是否压缩存储的洗牌输出
+  /**
+    * 优化：
+    *   是否压缩map输出文件。压缩将使用spark.io.compression.codec
+    */
   private[this] val compressShuffle = conf.getBoolean("spark.shuffle.compress", true)
   // Whether to compress RDD partitions that are stored serialized
   // 是否压缩存储序列化的RDD分区

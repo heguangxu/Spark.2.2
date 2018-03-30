@@ -648,6 +648,7 @@ class SparkSession private(
    */
   def sql(sqlText: String): DataFrame = {
     // ParserInterface ==> parsePlan的具体实现在AbstractSqlParser类中
+    // parsePlan(sqlText)对SQL语句进行解析
     Dataset.ofRows(self, sessionState.sqlParser.parsePlan(sqlText))
   }
 

@@ -701,10 +701,25 @@ private[spark] object SparkConf extends Logging {
       AlternateConfig("spark.history.fs.cleaner.interval.seconds", "1.4")),
     "spark.history.fs.cleaner.maxAge" -> Seq(
       AlternateConfig("spark.history.fs.cleaner.maxAge.seconds", "1.4")),
+
+    /**
+      * 优化：
+      *   spark.yarn.applicationMaster.waitTries在spark1.3版本开始过时了，这个是ApplicationMaster容许
+      *   SparkContext初始化失败的最大次数。
+      *
+      *   现在改成配置spark.yarn.am.waitTime，重试的等待时间，默认是10秒，递增10 20 30 。。。
+      */
     "spark.yarn.am.waitTime" -> Seq(
       AlternateConfig("spark.yarn.applicationMaster.waitTries", "1.3",
         // Translate old value to a duration, with 10s wait time per try.
         translation = s => s"${s.toLong * 10}s")),
+
+    /**
+      * 优化：spark.reducer.maxMbInFlight  1。4版本过时
+      *     每个reduce任务同时获取map输出的最大值（以M为字节单位）。由于每个map输出都需要一个缓冲区
+      *  来接收它，这代表着每个reduce任务有着固定的内存开销，所以要设置小点，除非有很大的内存。
+      *
+      */
     "spark.reducer.maxSizeInFlight" -> Seq(
       AlternateConfig("spark.reducer.maxMbInFlight", "1.4")),
     "spark.kryoserializer.buffer" ->
@@ -712,6 +727,20 @@ private[spark] object SparkConf extends Logging {
           translation = s => s"${(s.toDouble * 1000).toInt}k")),
     "spark.kryoserializer.buffer.max" -> Seq(
       AlternateConfig("spark.kryoserializer.buffer.max.mb", "1.4")),
+
+    /**
+      * 优化：spark.shuffle.file.buffer
+      *
+      *   spark中shuffle输出的ShuffleMapTask为每个ResultTask创建对应的Bucket，ShuffleMapTask
+      * 产生的结果会根据设置的partitioner的到对应的BucketId，然后填充到相应的Bucket中。每个ShuffleMapTask的
+      * 输出结果可能包含所有ResultTask素偶需要的数据，所以每个ShuffleMapTask创建的Bucket的数目和ResultTask的
+      * 数目是相当的。
+      *
+      *   ShuffleMapTask创建的Bucket对应磁盘上的一个文件，用于存储结果，此文件被称为BlockFile。通过
+      *  spark.shuffle.file.buffer.kb属性配置的缓冲区就是用来chuangjianFastBufferedOutputStream输出流的，
+      *  如果配置文件中设置了spark.shuffle.consolidateFiles属性为true，则ShuffleMapTask所产生的Bucket就不一
+      *  定单独对应一个文件了，而是对应文件的一部分，这样做会大量减少产生的BlockFile文件数量。
+      */
     "spark.shuffle.file.buffer" -> Seq(
       AlternateConfig("spark.shuffle.file.buffer.kb", "1.4")),
     "spark.executor.logs.rolling.maxSize" -> Seq(
@@ -730,6 +759,13 @@ private[spark] object SparkConf extends Logging {
       AlternateConfig("spark.akka.lookupTimeout", "1.4")),
     "spark.streaming.fileStream.minRememberDuration" -> Seq(
       AlternateConfig("spark.streaming.minRememberDuration", "1.5")),
+
+    /**
+      * 优化：spark.yarn.max.executor.failures
+      *
+      *   Executor失败的最大次数。
+      *
+      */
     "spark.yarn.max.executor.failures" -> Seq(
       AlternateConfig("spark.yarn.max.worker.failures", "1.5")),
     "spark.memory.offHeap.enabled" -> Seq(
@@ -837,9 +873,9 @@ private[spark] object SparkConf extends Logging {
   /**
    * Information about an alternate configuration key that has been deprecated.
    * 关于一个配置key已经过时的信息。
-   * @param key The deprecated config key.
-   * @param version The Spark version in which the key was deprecated.
-   * @param translation A translation function for converting old config values into new ones.
+   * @param key The deprecated config key.  过时的 配置属性名称
+   * @param version The Spark version in which the key was deprecated.  过时的属性名称的版本
+   * @param translation A translation function for converting old config values into new ones.  对应新的配置名称
    */
   private case class AlternateConfig(
       key: String,

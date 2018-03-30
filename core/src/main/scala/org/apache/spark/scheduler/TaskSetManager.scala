@@ -73,6 +73,8 @@ import org.apache.spark.util.collection.MedianHeap
   * 此外，TaskSetManager在调度任务时还可能进一步考虑Speculattion的情况，当某个任务的运行时间超过其他任务的运行时间的一个特定
   * 比例值时，该任务可能被重复调度。目的是为了防止某个运行中的Task由于有些特殊原因（例如所在节点CPU负载过高，IO带宽被占等）运
   * 行缓慢拖延了整个Stage的完成时间，Speculation同样需要根据集群和作业的实际情况合理配置。
+  *
+  * TaskSetManager负责当前TaskSet中所有的Task的启动，失败后的重试，本地化处理等。
  */
 private[spark] class TaskSetManager(
     sched: TaskSchedulerImpl,  // sched：TaskScheduler实现类,可以有不同的实现类，这里默认为TaskSchedulerImpl
@@ -478,6 +480,7 @@ private[spark] class TaskSetManager(
       }
 
       // Check for no-preference tasks
+      // NO_PREF: 数据从哪里访问都一样快，不需要位置优先
       if (TaskLocality.isAllowed(locality, TaskLocality.NO_PREF)) {
         for (index <- speculatableTasks if canRunOnHost(index)) {
           val locations = tasks(index).preferredLocations
@@ -489,6 +492,7 @@ private[spark] class TaskSetManager(
       }
 
       // Check for rack-local tasks
+      // RACK_LOCAL: 数据在同一机架的不同节点上。需要通过网络传输数据及文件 IO，比 NODE_LOCAL 慢
       if (TaskLocality.isAllowed(locality, TaskLocality.RACK_LOCAL)) {
         for (rack <- sched.getRackForHost(host)) {
           for (index <- speculatableTasks if canRunOnHost(index)) {
@@ -501,7 +505,8 @@ private[spark] class TaskSetManager(
         }
       }
 
-      // Check for non-local tasks
+      // Check for non-local tasks A
+      // NY: 数据在非同一机架的网络上，速度最慢
       if (TaskLocality.isAllowed(locality, TaskLocality.ANY)) {
         for (index <- speculatableTasks if canRunOnHost(index)) {
           speculatableTasks -= index
@@ -718,25 +723,37 @@ private[spark] class TaskSetManager(
     *  最佳本地化（PROCESS_LOCAL）的资源时，如果一直固执地期盼的到最佳的资源，很有可能会被已经占用最佳资源但是运行时间很长的
     *  任务单个，所以这些代码实现了当没有最佳本地化时，退而求其次选择稍微差一点的资源。
     *
+    *   获取当前时间curTime，并且结合上次执行Task分配的时间，从currentLocalityIndex的下标开始，取出locality对应的
+    *   task分配等待时间，如果时间超过这个设置，就把下标加1，直至找到一个符合条件的下标值，然后计算此下标值对应的locality
+    *   级别。
+    *
    */
   private def getAllowedLocalityLevel(curTime: Long): TaskLocality.TaskLocality = {
-    // Remove the scheduled or finished tasks lazily
+    // Remove the scheduled or finished tasks lazily 懒加载地删除计划或完成的任务
     def tasksNeedToBeScheduledFrom(pendingTaskIds: ArrayBuffer[Int]): Boolean = {
+      // 获取准备执行任务数组的大小
       var indexOffset = pendingTaskIds.size
+      // 倒叙循环
       while (indexOffset > 0) {
         indexOffset -= 1
+        // 获取数组最后一个下标
         val index = pendingTaskIds(indexOffset)
+        // 如果拷贝正在运行的一个task数组为0，而且这个task运行失败，说明这个task还没开始执行啊
         if (copiesRunning(index) == 0 && !successful(index)) {
           return true
         } else {
+          // 如果task已经开始执行了，那么就从准备运行的task数组中删除
           pendingTaskIds.remove(indexOffset)
         }
       }
       false
     }
+
     // Walk through the list of tasks that can be scheduled at each location and returns true
     // if there are any tasks that still need to be scheduled. Lazily cleans up tasks that have
     // already been scheduled.
+    //
+    // 遍历可在每个位置安排的任务列表，并返回true，如果仍有需要调度的任务。懒洋洋地清理已经安排好的任务。
     def moreTasksToRunIn(pendingTasks: HashMap[String, ArrayBuffer[Int]]): Boolean = {
       val emptyKeys = new ArrayBuffer[String]
       val hasTasks = pendingTasks.exists {
@@ -753,6 +770,7 @@ private[spark] class TaskSetManager(
       hasTasks
     }
 
+    // 当前的分配等级（根据数据本地性定义的优先级） <  在构造 TaskSetManager 对象时，确定的locality levels -1
     while (currentLocalityIndex < myLocalityLevels.length - 1) {
       val moreTasks = myLocalityLevels(currentLocalityIndex) match {
         case TaskLocality.PROCESS_LOCAL => moreTasksToRunIn(pendingTasksForExecutor)
@@ -760,17 +778,24 @@ private[spark] class TaskSetManager(
         case TaskLocality.NO_PREF => pendingTasksWithNoPrefs.nonEmpty
         case TaskLocality.RACK_LOCAL => moreTasksToRunIn(pendingTasksForRack)
       }
+
       if (!moreTasks) {
         // This is a performance optimization: if there are no more tasks that can
         // be scheduled at a particular locality level, there is no point in waiting
         // for the locality wait timeout (SPARK-4939).
+        //
+        // 这是一个性能优化:如果没有更多的任务可以在一个特定的局部性级别调度，那么等待本地等待超时是没有意义的(SPARK-4939)
         lastLaunchTime = curTime
         logDebug(s"No tasks for locality level ${myLocalityLevels(currentLocalityIndex)}, " +
           s"so moving to locality level ${myLocalityLevels(currentLocalityIndex + 1)}")
         currentLocalityIndex += 1
+
+        // curTime - 当前等级下的任务launch的最迟时间。 >=  每一个级别的等待时间
       } else if (curTime - lastLaunchTime >= localityWaits(currentLocalityIndex)) {
         // Jump to the next locality level, and reset lastLaunchTime so that the next locality
         // wait timer doesn't immediately expire
+        //
+        // 跳转到下一个本地级别，并重置lastLaunchTime，以便下一个本地等待计时器不会立即过期。
         lastLaunchTime += localityWaits(currentLocalityIndex)
         logDebug(s"Moving to ${myLocalityLevels(currentLocalityIndex + 1)} after waiting for " +
           s"${localityWaits(currentLocalityIndex)}ms")

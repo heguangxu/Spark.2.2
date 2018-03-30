@@ -78,6 +78,12 @@ package object config {
     .stringConf
     .createWithDefault("default")
 
+  /**
+    * 优化：spark.yarn.historyServer.address
+    *   spark history server的地址（不要加http://）.这个地址会在Spark应用程序完成后提交给Yarn RM，
+    *   然后RM将信息从RM UI写到history server UI上。
+    *
+    */
   private[spark] val HISTORY_SERVER_ADDRESS = ConfigBuilder("spark.yarn.historyServer.address")
     .stringConf
     .createOptional
@@ -122,6 +128,12 @@ package object config {
     .booleanConf
     .createWithDefault(false)
 
+  /**
+    * 优化：spark.yarn.submit.file.replication
+    *
+    * Spark所依赖的文件，jar包等上传到HDFS中的副本数目
+    *
+    */
   private[spark] val STAGING_FILE_REPLICATION = ConfigBuilder("spark.yarn.submit.file.replication")
     .doc("Replication factor for files uploaded by Spark to HDFS.")
     .intConf
@@ -170,6 +182,11 @@ package object config {
       .intConf
       .createWithDefault(5)
 
+  /**
+    * 优化：spark.yarn.scheduler.heartbeat.interval-ms
+    *
+    * ApplicationMaster向Yarn的ResourceManager心跳汇报的间隔。
+    */
   private[spark] val RM_HEARTBEAT_INTERVAL =
     ConfigBuilder("spark.yarn.scheduler.heartbeat.interval-ms")
       .timeConf(TimeUnit.MILLISECONDS)
@@ -216,6 +233,11 @@ package object config {
     .intConf
     .createWithDefault(1)
 
+  /**
+    * 优化：spark.yarn.driver.memoryOverhead
+    *
+    * 每个Driver都必须分配的堆空间大小，用于内部的一些计算，单位是M字节。
+    */
   private[spark] val DRIVER_MEMORY_OVERHEAD = ConfigBuilder("spark.yarn.driver.memoryOverhead")
     .bytesConf(ByteUnit.MiB)
     .createOptional
@@ -226,6 +248,11 @@ package object config {
     .intConf
     .createWithDefault(1)
 
+  /**
+    * 优化：spark.yarn.executor.memoryOverhead
+    * 将每个Executor都必须分配的堆空间大小，用于内部的一些计算，单位是M字节。
+    *
+    */
   private[spark] val EXECUTOR_MEMORY_OVERHEAD = ConfigBuilder("spark.yarn.executor.memoryOverhead")
     .bytesConf(ByteUnit.MiB)
     .createOptional

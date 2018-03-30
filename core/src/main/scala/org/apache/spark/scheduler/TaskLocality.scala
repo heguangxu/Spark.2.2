@@ -27,6 +27,7 @@ object TaskLocality extends Enumeration {
   type TaskLocality = Value
 
   def isAllowed(constraint: TaskLocality, condition: TaskLocality): Boolean = {
+    // condition：条件 小于等于  constraint：约束
     condition <= constraint
   }
 }

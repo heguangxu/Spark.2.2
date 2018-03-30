@@ -33,6 +33,8 @@ abstract class LogicalPlan extends QueryPlan[LogicalPlan] with Logging {
 
   /**
    * Marks this plan as already analyzed. This should only be called by [[CheckAnalysis]].
+    *
+    * 将此计划标记为已经分析过的。这只应该被CheckAnalysis调用。
    */
   private[catalyst] def setAnalyzed(): Unit = { _analyzed = true }
 

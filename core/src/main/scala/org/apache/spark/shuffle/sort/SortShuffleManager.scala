@@ -94,6 +94,10 @@ import org.apache.spark.shuffle._
  */
 private[spark] class SortShuffleManager(conf: SparkConf) extends ShuffleManager with Logging {
 
+  /**
+    * 优化：spark.shuffle.spill
+    *   如果为true，在shuffle期间通过溢出数据到磁盘来降低内存使用总量，溢出阈值是由spark.shuffle.memoryFraction指定的。
+    */
   if (!conf.getBoolean("spark.shuffle.spill", true)) {
     logWarning(
       "spark.shuffle.spill was set to false, but this configuration is ignored as of Spark 1.6+." +
