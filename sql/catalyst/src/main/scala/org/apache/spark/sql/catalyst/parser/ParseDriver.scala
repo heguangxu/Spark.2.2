@@ -66,6 +66,7 @@ abstract class AbstractSqlParser extends ParserInterface with Logging {
 
   /** Creates LogicalPlan for a given SQL string.
     * 根据给定的SQL字符串，创建一个LogicalPlan
+    * 逻辑执行计划的生成
     * */
   override def parsePlan(sqlText: String): LogicalPlan = parse(sqlText) { parser =>
     // 首先进入parse(sqlText)方法
@@ -84,7 +85,7 @@ abstract class AbstractSqlParser extends ParserInterface with Logging {
   protected def astBuilder: AstBuilder
 
   /**
-    * 解析Sql语句
+    * 解析Sql语句，生成逻辑执行计划
     * @param command
     * @param toResult
     * @tparam T
@@ -95,7 +96,7 @@ abstract class AbstractSqlParser extends ParserInterface with Logging {
 
     // 这里对于SQL语句的解析采用的是ANTLR 4，从这里看出来的ANTLRNoCaseStringStream
 
-    // 创建SqlBaseLexer词法解析器
+    // 创建SqlBaseLexer词法解析器，这里侍弄了spark catalyst
     val lexer = new SqlBaseLexer(new ANTLRNoCaseStringStream(command))
     lexer.removeErrorListeners()
     lexer.addErrorListener(ParseErrorListener)
@@ -109,17 +110,17 @@ abstract class AbstractSqlParser extends ParserInterface with Logging {
 
     try {
       try {
-        // first, try parsing with potentially faster SLL mode
+        // first, try parsing with potentially faster SLL mode 首先，尝试使用可能更快的SLL模式解析。
         parser.getInterpreter.setPredictionMode(PredictionMode.SLL)
         toResult(parser)
       }
       catch {
         case e: ParseCancellationException =>
-          // if we fail, parse with LL mode
-          tokenStream.reset() // rewind input stream
+          // if we fail, parse with LL mode 如果SLL解析错误，那么就是用LL模式
+          tokenStream.reset() // rewind input stream 倒带输入流
           parser.reset()
 
-          // Try Again.
+          // Try Again.   用LL模式重新解析
           parser.getInterpreter.setPredictionMode(PredictionMode.LL)
           toResult(parser)
       }
@@ -166,6 +167,18 @@ object CatalystSqlParser extends AbstractSqlParser {
  * function and is purely used for matching lexical rules. This also means that the grammar will
  * only accept capitalized tokens in case it is run from other tools like antlrworks which do not
  * have the ANTLRNoCaseStringStream implementation.
+  *
+  * 此字符串流仅为lexer提供大写字符。这大大简化了流的lexing，而我们可以保持原来的命令。
+  *
+  * 这是基于Hive的org.apache.hadoop.hive.ql.parse.ParseDriver.ANTLRNoCaseStringStream
+  *
+  * 下面的注释(取自原始类)描述了这样做的基本原理:
+  *
+  * 这个类为antlr的词法分析部分提供了一个大小写不敏感的标记检查器。在检查词法规则时，通过将令牌流转换为大写字母，
+  * 该类确保了词汇规则只需要与大写字母匹配，而不是大写字母和小写字母组合。这纯粹用于匹配词法规则。实际的令牌文本
+  * 以与用户输入相同的方式存储，而不实际将其转换为大写。令牌值由超类ANTLRStringStream的use()函数生成。
+  * LA()函数是lookahead函数，它纯粹用于匹配词法规则。这也意味着语法只接受大写的令牌，以防它是从其他工具中运行的，
+  * 比如antlrworks，它没有ANTLRNoCaseStringStream实现。
  */
 
 private[parser] class ANTLRNoCaseStringStream(input: String) extends ANTLRInputStream(input) {

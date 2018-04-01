@@ -64,6 +64,7 @@ class QueryExecution(val sparkSession: SparkSession, val logical: LogicalPlan) {
     }
   }
 
+  //调用analyzer解析器
   lazy val analyzed: LogicalPlan = {
     SparkSession.setActiveSession(sparkSession)
     sparkSession.sessionState.analyzer.execute(logical)
@@ -75,9 +76,11 @@ class QueryExecution(val sparkSession: SparkSession, val logical: LogicalPlan) {
     sparkSession.sharedState.cacheManager.useCachedData(analyzed)
   }
 
+  //调用optimizer优化器
   lazy val optimizedPlan: LogicalPlan = sparkSession.sessionState.optimizer.execute(withCachedData)
 
   //  将optimized logicalPlan转换成PhysicalPlan
+  // 将优化后的逻辑执行计划转换成物理执行计划
   lazy val sparkPlan: SparkPlan = {
     SparkSession.setActiveSession(sparkSession)
     // TODO: We use next(), i.e. take the first plan returned by the planner, here for now,

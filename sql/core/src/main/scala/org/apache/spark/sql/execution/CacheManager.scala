@@ -41,6 +41,9 @@ case class CachedData(plan: LogicalPlan, cachedRepresentation: InMemoryRelation)
  * results when subsequent queries are executed.  Data is cached using byte buffers stored in an
  * InMemoryRelation.  This relation is automatically substituted query plans that return the
  * `sameResult` as the originally cached query.
+  *
+  * 在SQLContext中提供支持，用于缓存查询结果，并在执行后续查询时自动使用这些缓存结果。数据缓存使用存储在内存中的字节缓冲。
+  * 这个关系是自动替换的查询计划，返回“sameResult”作为最初的缓存查询。
  *
  * Internal to Spark SQL.
  */

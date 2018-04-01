@@ -213,8 +213,12 @@ private[spark] object Utils extends Logging {
    * Get the Context ClassLoader on this thread or, if not present, the ClassLoader that
    * loaded Spark.
    *
+    * 在这个线程上获取上下文类加载器，或者，如果不存在，加载Spark的类加载器。
+    *
    * This should be used whenever passing a ClassLoader to Class.ForName or finding the currently
    * active loader when setting up ClassLoader delegation chains.
+    *
+    * 当设置类加载器委托链时，应该使用此方法。使用Class.ForName或者获取当前活动的加载器。
    */
   def getContextOrSparkClassLoader: ClassLoader =
     Option(Thread.currentThread().getContextClassLoader).getOrElse(getSparkClassLoader)

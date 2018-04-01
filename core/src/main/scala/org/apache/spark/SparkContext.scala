@@ -353,6 +353,9 @@ class SparkContext(config: SparkConf) extends Logging {
    * plan to set some global configurations for all Hadoop RDDs.
     *
     *  因为它将被所有的hadoop RDD重用 ,你尽量不要修改，除非你想为所有的hadoop rdds设置全局变量
+    *
+    *  这个就是当启动SparkApplication的时候，里面会包含很多其他的配置，比如hbase的hive，等。
+    *  当你使用的功能越来越多，这里面保存的配置就越来越多。
    */
   def hadoopConfiguration: Configuration = _hadoopConfiguration
 

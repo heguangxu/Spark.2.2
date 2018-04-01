@@ -124,6 +124,12 @@ class SparkSession private(
    * If `parentSessionState` is not null, the `SessionState` will be a copy of the parent.
    *
    * This is internal to Spark and there is no guarantee on interface stability.
+    *
+    * spark的状态信息和SparkSession是分离的,包括SQL配置、临时表、注册功能,和其他所有的事情,
+    * 接受一个org.apache.spark.sql.internal.SQLConf.如果当前的sparkSession（parentSessionState）
+    * 不是空值，,“SessionState”将拷贝一个当前的副本。
+    *
+    * 这是spark内部使用的，并不能保证接口的稳定性。
    *
    * @since 2.2.0
    */
@@ -642,7 +648,7 @@ class SparkSession private(
    * Executes a SQL query using Spark, returning the result as a `DataFrame`.
    * The dialect that is used for SQL parsing can be configured with 'spark.sql.dialect'.
    *
-    * 使用Spark执行一个SQL查询，将结果返回为“DataFrame”。用于SQL解析的方言可以配置为“spark. SQL .方言”。
+    * 使用Spark执行一个SQL查询，将结果返回为“DataFrame”。用于SQL解析的方言可以配置为“spark.sql.dialect”。
     * spark sql的入口是最后一句，SparkSession类里的sql函数，传入一个sql字符串，返回一个dataframe对象。
    * @since 2.0.0
    */

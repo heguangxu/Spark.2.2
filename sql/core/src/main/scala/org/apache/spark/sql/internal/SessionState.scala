@@ -36,22 +36,24 @@ import org.apache.spark.sql.util.{ExecutionListenerManager, QueryExecutionListen
 
 /**
  * A class that holds all session-specific state in a given [[SparkSession]].
+  *
+  * 在给定的SparkSession中保存所有会话特定状态的类。
  *
- * @param sharedState The state shared across sessions, e.g. global view manager, external catalog.
- * @param conf SQL-specific key-value configurations.
- * @param experimentalMethods Interface to add custom planning strategies and optimizers.
- * @param functionRegistry Internal catalog for managing functions registered by the user.
- * @param udfRegistration Interface exposed to the user for registering user-defined functions.
- * @param catalog Internal catalog for managing table and database states.
- * @param sqlParser Parser that extracts expressions, plans, table identifiers etc. from SQL texts.
- * @param analyzer Logical query plan analyzer for resolving unresolved attributes and relations.
- * @param optimizer Logical query plan optimizer.
- * @param planner Planner that converts optimized logical plans to physical plans.
- * @param streamingQueryManager Interface to start and stop streaming queries.
- * @param listenerManager Interface to register custom [[QueryExecutionListener]]s.
- * @param resourceLoader Session shared resource loader to load JARs, files, etc.
- * @param createQueryExecution Function used to create QueryExecution objects.
- * @param createClone Function used to create clones of the session state.
+ * @param sharedState The state shared across sessions, e.g. global view manager, external catalog. 在会话中共享状态，例如全局视图管理器、外部目录。
+ * @param conf SQL-specific key-value configurations. sql特定键值key-value配置。
+ * @param experimentalMethods Interface to add custom planning strategies and optimizers. 添加自定义规划策略和优化器的接口。
+ * @param functionRegistry Internal catalog for managing functions registered by the user. 管理用户注册的函数的内部目录。
+ * @param udfRegistration Interface exposed to the user for registering user-defined functions.面向用户公开用户定义函数的接口。
+ * @param catalog Internal catalog for managing table and database states. 管理表和数据库状态的内部目录。
+ * @param sqlParser Parser that extracts expressions, plans, table identifiers etc. from SQL texts. 从SQL文本中提取表达式、计划、表标识符等的解析器。
+ * @param analyzer Logical query plan analyzer for resolving unresolved attributes and relations. 逻辑查询计划分析器来解决未解决的属性和关系。
+ * @param optimizer Logical query plan optimizer. 逻辑查询优化器计划。
+ * @param planner Planner that converts optimized logical plans to physical plans. 将优化的逻辑计划转换成物理计划的计划者。
+ * @param streamingQueryManager Interface to start and stop streaming queries. 启动和停止流查询的接口。
+ * @param listenerManager Interface to register custom [[QueryExecutionListener]]s. 用于注册自定义[[QueryExecutionListener]]的接口。
+ * @param resourceLoader Session shared resource loader to load JARs, files, etc. 会话共享资源加载器加载jar、文件等。
+ * @param createQueryExecution Function used to create QueryExecution objects. 用于创建QueryExecution对象的函数。
+ * @param createClone Function used to create clones of the session state. 用于创建会话状态的克隆的函数
  */
 private[sql] class SessionState(
     sharedState: SharedState,

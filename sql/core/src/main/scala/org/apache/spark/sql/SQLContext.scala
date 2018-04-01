@@ -37,6 +37,8 @@ import org.apache.spark.sql.streaming.{DataStreamReader, StreamingQueryManager}
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.util.ExecutionListenerManager
 
+
+
 /**
  * The entry point for working with structured data (rows and columns) in Spark 1.x.
  *

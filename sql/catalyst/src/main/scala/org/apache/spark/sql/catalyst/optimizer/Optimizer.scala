@@ -406,6 +406,10 @@ object PushProjectionThroughUnion extends Rule[LogicalPlan] with PredicateHelper
  *   p1 @ Project(_, Filter(_, p2 @ Project(_, child))) if p2.outputSet.subsetOf(p2.inputSet)
  *
  * p2 is usually inserted by this rule and useless, p1 could prune the columns anyway.
+  *
+  *
+  *
+  * 列值裁剪规则
  */
 object ColumnPruning extends Rule[LogicalPlan] {
   private def sameOutput(output1: Seq[Attribute], output2: Seq[Attribute]): Boolean =
@@ -924,6 +928,8 @@ object PushDownPredicate extends Rule[LogicalPlan] with PredicateHelper {
  * attributes of the left or right side of sub query when applicable.
  *
  * Check https://cwiki.apache.org/confluence/display/Hive/OuterJoinBehavior for more details
+  *
+  * 谓词下推规则
  */
 object PushPredicateThroughJoin extends Rule[LogicalPlan] with PredicateHelper {
   /**

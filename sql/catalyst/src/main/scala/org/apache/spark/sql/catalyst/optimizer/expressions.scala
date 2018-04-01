@@ -38,6 +38,10 @@ import org.apache.spark.sql.types._
 /**
  * Replaces [[Expression Expressions]] that can be statically evaluated with
  * equivalent [[Literal]] values.
+  *
+  *
+  *
+  * 常量累加规则
  */
 object ConstantFolding extends Rule[LogicalPlan] {
   def apply(plan: LogicalPlan): LogicalPlan = plan transform {

@@ -72,7 +72,9 @@ private[sql] object Dataset {
     */
   def ofRows(sparkSession: SparkSession, logicalPlan: LogicalPlan): DataFrame = {
     // 这里首先创建了queryExecution类对象,QueryExecution中定义了sql执行过程中的关键步骤，
-    // 是sql执行的关键类，返回一个dataframe类型的对象。
+    // 是sql执行的关键类，返回一个dataframe类型的对象。QueryExecutor类中的成员都是lazy的，
+    // 被调用的时候才会执行，只有当程序中出现action算子的时候，才会调用queryExecution类中的
+    // executedPlan成员，原先生成的逻辑执行计划才会被优化器优化，并转换成物理执行计划真正的被系统调用执行。
     val qe = sparkSession.sessionState.executePlan(logicalPlan)
     qe.assertAnalyzed()
     new Dataset[Row](sparkSession, qe, RowEncoder(qe.analyzed.schema))
@@ -442,6 +444,9 @@ class Dataset[T] private[sql](
 
   /**
    * Prints the plans (logical and physical) to the console for debugging purposes.
+    * 将计划(逻辑和物理)打印到控制台以进行调试。
+    *
+    * 使用DataSet的explain函数实现逻辑执行计划和物理执行计划的打印
    *
    * @group basic
    * @since 1.6.0

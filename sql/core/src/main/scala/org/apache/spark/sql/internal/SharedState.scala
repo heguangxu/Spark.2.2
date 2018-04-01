@@ -38,23 +38,37 @@ import org.apache.spark.util.{MutableURLClassLoader, Utils}
 
 /**
  * A class that holds all state shared across sessions in a given [[SQLContext]].
-  * 一个在给定的会话中保持所有状态共享的类
+  * 一个在给定的SQLContext会话sessions中保持所有状态共享的类
  */
 private[sql] class SharedState(val sparkContext: SparkContext) extends Logging {
 
   // Load hive-site.xml into hadoopConf and determine the warehouse path we want to use, based on
   // the config from both hive and Spark SQL. Finally set the warehouse config value to sparkConf.
+  //
+  // 加载hive-site。根据hive和Spark SQL的配置，将xml放入hadoop opconf并确定我们想要使用的仓库路径。最后将仓库配置值设置为sparkConf。
   val warehousePath: String = {
     val configFile = Utils.getContextOrSparkClassLoader.getResource("hive-site.xml")
     if (configFile != null) {
       logInfo(s"loading hive config file: $configFile")
+      // 全都加入到一个总得配置类里
       sparkContext.hadoopConfiguration.addResource(configFile)
     }
 
     // hive.metastore.warehouse.dir only stay in hadoopConf
+    /**
+      * 提示：
+      * hive.metastore.warehouse.dir只能在hadoopConf中配置，如果其他地方配置了，是无效的。
+      */
     sparkContext.conf.remove("hive.metastore.warehouse.dir")
+
     // Set the Hive metastore warehouse path to the one we use
+    // 获取hive元数据配置的目录
     val hiveWarehouseDir = sparkContext.hadoopConfiguration.get("hive.metastore.warehouse.dir")
+
+    /**
+      * 如果hive.metastore.warehouse.dir和spark.sql.warehouse.dir配置都是空，
+      * 那么就把spark.sql.warehouse.dir的值指向hive.metastore.warehouse.dir设置的值。
+      */
     if (hiveWarehouseDir != null && !sparkContext.conf.contains(WAREHOUSE_PATH.key)) {
       // If hive.metastore.warehouse.dir is set and spark.sql.warehouse.dir is not set,
       // we will respect the value of hive.metastore.warehouse.dir.
@@ -76,22 +90,25 @@ private[sql] class SharedState(val sparkContext: SparkContext) extends Logging {
     }
   }
 
-  // // 32	==>	17/12/05 11:56:51 INFO SharedState: Warehouse path is 'file:/E:/04-scala_eclipse/01-work/HbaseSparkSQL2/spark-warehouse/'.
+  // // 32	==>	17/12/05 11:56:51 INFO SharedState: Warehouse path is 'file:/E:/01-work/HbaseSparkSQL2/spark-warehouse/'.
   logInfo(s"Warehouse path is '$warehousePath'.")
 
 
   /**
    * Class for caching query results reused in future executions.
+    * 用于缓存查询结果的类在将来的执行中重用。
    */
   val cacheManager: CacheManager = new CacheManager
 
   /**
    * A listener for SQL-specific [[org.apache.spark.scheduler.SparkListenerEvent]]s.
+    *
+    * 一个org.apache.spark.scheduler.SparkListenerEvent指定的监听器
    */
   val listener: SQLListener = createListenerAndUI(sparkContext)
 
   /**
-   * A catalog that interacts with external systems.
+   * A catalog that interacts with external systems. 与外部系统交互的目录。
    */
   lazy val externalCatalog: ExternalCatalog = {
     val externalCatalog = SharedState.reflect[ExternalCatalog, SparkConf, Configuration](
@@ -122,7 +139,7 @@ private[sql] class SharedState(val sparkContext: SparkContext) extends Logging {
   }
 
   /**
-   * A manager for global temporary views.
+   * A manager for global temporary views. 一个全局临时视图的管理器。
    */
   lazy val globalTempViewManager: GlobalTempViewManager = {
     // System preserved database should not exists in metastore. However it's hard to guarantee it
@@ -139,13 +156,15 @@ private[sql] class SharedState(val sparkContext: SparkContext) extends Logging {
   }
 
   /**
-   * A classloader used to load all user-added jar.
+   * A classloader used to load all user-added jar. 用于加载所有用户添加的jar的类加载器。
    */
   val jarClassLoader = new NonClosableMutableURLClassLoader(
     org.apache.spark.util.Utils.getContextOrSparkClassLoader)
 
   /**
    * Create a SQLListener then add it into SparkContext, and create a SQLTab if there is SparkUI.
+    *
+    * 创建一个SQLListener，然后将它添加到SparkContext中，如果有SparkUI，创建一个SQLTab。
    */
   private def createListenerAndUI(sc: SparkContext): SQLListener = {
     if (SparkSession.sqlListener.get() == null) {

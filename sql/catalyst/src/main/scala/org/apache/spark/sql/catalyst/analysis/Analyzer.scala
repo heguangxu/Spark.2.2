@@ -560,6 +560,9 @@ class Analyzer(
 
   /**
    * Replaces [[UnresolvedRelation]]s with concrete relations from the catalog.
+    *
+    * 解析表（列）基本数据类型等信息
+    *
    */
   object ResolveRelations extends Rule[LogicalPlan] {
 
@@ -1163,6 +1166,9 @@ class Analyzer(
 
   /**
    * Replaces [[UnresolvedFunction]]s with concrete [[Expression]]s.
+    *
+    * 解析基本函数信息，比如min,max
+    *
    */
   object ResolveFunctions extends Rule[LogicalPlan] {
     def apply(plan: LogicalPlan): LogicalPlan = plan.resolveOperators {
@@ -1214,6 +1220,9 @@ class Analyzer(
    * This rule resolves and rewrites subqueries inside expressions.
    *
    * Note: CTEs are handled in CTESubstitution.
+    *
+    *
+    * 解析AST中的字查询信息
    */
   object ResolveSubquery extends Rule[LogicalPlan] with PredicateHelper {
     /**
