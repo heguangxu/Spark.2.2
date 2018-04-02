@@ -82,6 +82,13 @@ private[yarn] class ExecutorRunnable(
     |===============================================================================""".stripMargin
   }
 
+
+  /**
+    * ExecutorRunnable与Yarn的关系：
+    *   1. 向ContainerManager建立连接，让cm来startContainer。
+    *   2. ContainerLaunchContext包含了yarn的NodeManager启动一个container需要的所有信息。ExecutorRunnable会构建这个container申请信息。
+    * @return
+    */
   def startContainer(): java.util.Map[String, ByteBuffer] = {
     val ctx = Records.newRecord(classOf[ContainerLaunchContext])
       .asInstanceOf[ContainerLaunchContext]

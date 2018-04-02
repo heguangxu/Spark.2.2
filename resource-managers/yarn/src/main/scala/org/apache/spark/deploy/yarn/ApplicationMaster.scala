@@ -181,6 +181,17 @@ private[spark] class ApplicationMaster(
     client.getAttemptId()
   }
 
+
+  /**
+    * 1. 如果不是Driver模式，执行runExecutorLauncher逻辑：
+    *     启动后，执行registerAM，里面new了YarnAllocator的实现，调用allocateResources，
+    *     申请并执行container。同时，启动一个reporter线程，每隔一段时间调用YarnAllocator的
+    *     allocateResources方法，或汇报有太多executor fail了。
+    *
+    * 2. 如果是Driver模式，执行runDriver逻辑：
+    *     也是执行registerAM，但是之前需要反射执行jar包里用户定义的driver类。
+    * @return
+    */
   final def run(): Int = {
     try {
       val appAttemptId = client.getAttemptId()
@@ -747,6 +758,13 @@ object ApplicationMaster extends Logging {
 
   private var master: ApplicationMaster = _
 
+
+  /**
+    * 如果AM的启动参数里有用户自己定义的类，则是Driver模式，即cluster模式。
+    * 用户自己定义的类里面带了spark driver，会在单独一个线程里启动。这也是
+    * cluster模式与client模式的区别，用户实现了driver vs 用户只是提交app。
+    * @param args
+    */
   def main(args: Array[String]): Unit = {
     SignalUtils.registerLogger(log)
     val amArgs = new ApplicationMasterArguments(args)
@@ -778,6 +796,12 @@ object ApplicationMaster extends Logging {
 /**
  * This object does not provide any special functionality. It exists so that it's easy to tell
  * apart the client-mode AM from the cluster-mode AM when using tools such as ps or jps.
+  *
+  * 该对象不提供任何特殊功能。它的存在使得在使用诸如ps或jps之类的工具时，很容易区分客户机模式和集群模式。
+  *
+  * ApplicationMaster相当于是spark在yarn上的AM，内部的YarnRMClient类，负责向RM注册和注销AM，以及拿
+  * 到attemptId。注册AM之后，得到一个可以申请/释放资源的YarnAllocationHandler类，从而可以维护container
+  * 与executor之间的关系。
  */
 object ExecutorLauncher {
 

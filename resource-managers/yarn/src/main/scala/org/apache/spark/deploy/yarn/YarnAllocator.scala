@@ -55,6 +55,14 @@ import org.apache.spark.util.{Clock, SystemClock, ThreadUtils}
  *
  * The public methods of this class are thread-safe.  All methods that mutate state are
  * synchronized.
+  *
+  *
+  *
+  * YarnAllocator负责向yarn申请和释放containers，维护containe、executor相关关系，有一个线程池。
+  * 申请到container之后，在container里执行ExecutorRunnable。需要子类实现的是申请和释放这两个方法：
+  *
+  * protected def allocateContainers(count: Int, pending: Int): YarnAllocateResponse
+  * protected def releaseContainer(container: Container): Unit
  */
 private[yarn] class YarnAllocator(
     driverUrl: String,
