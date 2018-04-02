@@ -29,25 +29,25 @@ import org.apache.spark.sql.types.{DataType, StructType}
 @DeveloperApi
 trait ParserInterface {
   /**
-   * Parse a string to a [[LogicalPlan]].
+   * Parse a string to a [[LogicalPlan]]. 解析一个字符串为 逻辑计划
    */
   @throws[ParseException]("Text cannot be parsed to a LogicalPlan")
   def parsePlan(sqlText: String): LogicalPlan
 
   /**
-   * Parse a string to an [[Expression]].
+   * Parse a string to an [[Expression]]. 解析一个字符串为 表达式
    */
   @throws[ParseException]("Text cannot be parsed to an Expression")
   def parseExpression(sqlText: String): Expression
 
   /**
-   * Parse a string to a [[TableIdentifier]].
+   * Parse a string to a [[TableIdentifier]].  解析一个字符串为 TableIdentifier
    */
   @throws[ParseException]("Text cannot be parsed to a TableIdentifier")
   def parseTableIdentifier(sqlText: String): TableIdentifier
 
   /**
-   * Parse a string to a [[FunctionIdentifier]].
+   * Parse a string to a [[FunctionIdentifier]].  解析一个字符串为 FunctionIdentifier
    */
   @throws[ParseException]("Text cannot be parsed to a FunctionIdentifier")
   def parseFunctionIdentifier(sqlText: String): FunctionIdentifier
@@ -55,12 +55,14 @@ trait ParserInterface {
   /**
    * Parse a string to a [[StructType]]. The passed SQL string should be a comma separated list
    * of field definitions which will preserve the correct Hive metadata.
+    *
+    *  解析一个字符串为 StructType，传递的SQL字符串应该是一个逗号分隔的字段定义列表，它将保留正确的Hive元数据。
    */
   @throws[ParseException]("Text cannot be parsed to a schema")
   def parseTableSchema(sqlText: String): StructType
 
   /**
-   * Parse a string to a [[DataType]].
+   * Parse a string to a [[DataType]]. 解析一个字符串为 DataType
    */
   @throws[ParseException]("Text cannot be parsed to a DataType")
   def parseDataType(sqlText: String): DataType

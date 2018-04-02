@@ -38,8 +38,8 @@ class ComplexTypesSuite extends PlanTest{
           CollapseProject) ::
       Batch("Constant Folding", FixedPoint(10),
           NullPropagation(conf),
-          ConstantFolding,
-          BooleanSimplification,
+          ConstantFolding,  // 可静态分析的常量表达式
+          BooleanSimplification, // 布尔表达式提前短路
           SimplifyConditionals,
           SimplifyBinaryComparison,
           SimplifyCreateStructOps,

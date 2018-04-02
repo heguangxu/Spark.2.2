@@ -30,26 +30,34 @@ import org.apache.spark.sql.internal.SQLConf
 import org.apache.spark.sql.types.{DataType, StructType}
 
 /**
- * Base SQL parsing infrastructure.
+ * Base SQL parsing infrastructure. 基础SQL解析基础设施。
  */
 abstract class AbstractSqlParser extends ParserInterface with Logging {
 
-  /** Creates/Resolves DataType for a given SQL string. */
+  /** Creates/Resolves DataType for a given SQL string.
+    * 为给定的SQL字符串创建/解析数据类型。
+    * */
   override def parseDataType(sqlText: String): DataType = parse(sqlText) { parser =>
     astBuilder.visitSingleDataType(parser.singleDataType())
   }
 
-  /** Creates Expression for a given SQL string. */
+  /** Creates Expression for a given SQL string.
+    * 为给定的SQL字符串创建表达式。
+    * */
   override def parseExpression(sqlText: String): Expression = parse(sqlText) { parser =>
     astBuilder.visitSingleExpression(parser.singleExpression())
   }
 
-  /** Creates TableIdentifier for a given SQL string. */
+  /** Creates TableIdentifier for a given SQL string.
+    * 为给定的SQL字符串创建表标识符。
+    * */
   override def parseTableIdentifier(sqlText: String): TableIdentifier = parse(sqlText) { parser =>
     astBuilder.visitSingleTableIdentifier(parser.singleTableIdentifier())
   }
 
-  /** Creates FunctionIdentifier for a given SQL string. */
+  /** Creates FunctionIdentifier for a given SQL string.
+    * 为给定的SQL字符串创建FunctionIdentifier。
+    * */
   override def parseFunctionIdentifier(sqlText: String): FunctionIdentifier = {
     parse(sqlText) { parser =>
       astBuilder.visitSingleFunctionIdentifier(parser.singleFunctionIdentifier())
@@ -59,6 +67,8 @@ abstract class AbstractSqlParser extends ParserInterface with Logging {
   /**
    * Creates StructType for a given SQL string, which is a comma separated list of field
    * definitions which will preserve the correct Hive metadata.
+    *
+    * 为给定的SQL字符串创建StructType，这是一个逗号分隔的字段定义列表，它将保留正确的Hive元数据。
    */
   override def parseTableSchema(sqlText: String): StructType = parse(sqlText) { parser =>
     StructType(astBuilder.visitColTypeList(parser.colTypeList()))
@@ -139,12 +149,13 @@ abstract class AbstractSqlParser extends ParserInterface with Logging {
 
 /**
  * Concrete SQL parser for Catalyst-only SQL statements.
+  * 具体的SQL解析器，用于仅用于催化的SQL语句。
  */
 class CatalystSqlParser(conf: SQLConf) extends AbstractSqlParser {
   val astBuilder = new AstBuilder(conf)
 }
 
-/** For test-only. */
+/** For test-only.  */
 object CatalystSqlParser extends AbstractSqlParser {
   val astBuilder = new AstBuilder(new SQLConf())
 }
@@ -191,6 +202,8 @@ private[parser] class ANTLRNoCaseStringStream(input: String) extends ANTLRInputS
 
 /**
  * The ParseErrorListener converts parse errors into AnalysisExceptions.
+  *
+  * ParseErrorListener将解析错误转换为AnalysisExceptions。
  */
 case object ParseErrorListener extends BaseErrorListener {
   override def syntaxError(
