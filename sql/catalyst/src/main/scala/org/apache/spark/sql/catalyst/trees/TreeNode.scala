@@ -49,6 +49,8 @@ case class Origin(
 /**
  * Provides a location for TreeNodes to ask about the context of their origin.  For example, which
  * line of code is currently being parsed.
+  *
+  * 为TreeNodes提供一个位置，询问其来源的上下文。例如，当前正在解析哪一行代码。
  */
 object CurrentOrigin {
   private val value = new ThreadLocal[Origin]() {
@@ -60,6 +62,11 @@ object CurrentOrigin {
 
   def reset(): Unit = value.set(Origin())
 
+  /**
+    * 设置当前解析的行，和行中开始的字符串位置
+    * @param line
+    * @param start
+    */
   def setPosition(line: Int, start: Int): Unit = {
     value.set(
       value.get.copy(line = Some(line), startPosition = Some(start)))

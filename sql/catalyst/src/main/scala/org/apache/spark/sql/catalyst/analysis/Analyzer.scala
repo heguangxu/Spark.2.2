@@ -41,6 +41,9 @@ import org.apache.spark.sql.types._
  * A trivial [[Analyzer]] with a dummy [[SessionCatalog]] and [[EmptyFunctionRegistry]].
  * Used for testing when all relations are already filled in and the analyzer needs only
  * to resolve attribute references.
+  *
+  *  一个微不足道的[[分析器]]与一个虚拟[[SessionCatalog]]和[[EmptyFunctionRegistry]]。
+  *  当所有关系都已填满时用于测试，而分析器只需要解析属性引用。
  */
 object SimpleAnalyzer extends Analyzer(
   new SessionCatalog(
@@ -55,7 +58,9 @@ object SimpleAnalyzer extends Analyzer(
  * Provides a way to keep state during the analysis, this enables us to decouple the concerns
  * of analysis environment from the catalog.
  *
- * Note this is thread local.
+  * 提供了一种在分析过程中保持状态的方法，这使我们能够将分析环境的关注点从目录中分离出来。
+  *
+ * Note this is thread local. 注意，这是线程本地的。
  *
  * @param defaultDatabase The default database used in the view resolution, this overrules the
  *                        current catalog database.
@@ -107,6 +112,8 @@ class Analyzer(
 
   /**
    * Override to provide additional rules for the "Resolution" batch.
+    * 重写以提供“解决”批处理的附加规则。
+    *
    */
   val extendedResolutionRules: Seq[Rule[LogicalPlan]] = Nil
 
@@ -114,6 +121,10 @@ class Analyzer(
    * Override to provide rules to do post-hoc resolution. Note that these rules will be executed
    * in an individual batch. This batch is to run right after the normal resolution batch and
    * execute its rules in one pass.
+    *
+    * 重写以提供规则，以执行事后的决议。注意，这些规则将在单个批处理中执行。此批处理将在正常解析批处理后运行，
+    * 并在一次传递中执行其规则。
+    *
    */
   val postHocResolutionRules: Seq[Rule[LogicalPlan]] = Nil
 

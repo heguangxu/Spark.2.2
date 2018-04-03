@@ -281,6 +281,9 @@ case class ExpressionEncoder[T](
    * Returns an encoded version of `t` as a Spark SQL row.  Note that multiple calls to
    * toRow are allowed to return the same actual [[InternalRow]] object.  Thus, the caller should
    * copy the result before making another call if required.
+    *
+    * 将“t”的编码版本返回到Spark SQL行。注意，多次调用toRow可以返回相同的实际[[InternalRow]]对象。
+    * 因此，调用方应该在需要时复制结果，然后再进行调用。
    */
   def toRow(t: T): InternalRow = try {
     inputRow(0) = t

@@ -54,15 +54,13 @@ private[columnar]
 case class CachedBatch(numRows: Int, buffers: Array[Array[Byte]], stats: InternalRow)
 
 case class InMemoryRelation(
-    output: Seq[Attribute],
-    useCompression: Boolean,
-    batchSize: Int,
+    output: Seq[Attribute], //输出属性，比如src表里就是[key,value]
+    useCompression: Boolean, //操作时是否使用压缩，默认false
+    batchSize: Int,  //批的大小量
     storageLevel: StorageLevel,
-    @transient child: SparkPlan,
+    @transient child: SparkPlan, //spark plan 具体child
     tableName: Option[String])(
     @transient var _cachedColumnBuffers: RDD[CachedBatch] = null,
-    val batchStats: LongAccumulator = child.sqlContext.sparkContext.longAccumulator)
-  extends logical.LeafNode with MultiInstanceRelation {
 
   override protected def innerChildren: Seq[SparkPlan] = Seq(child)
 

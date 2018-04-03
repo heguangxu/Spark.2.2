@@ -121,7 +121,9 @@ case class ExternalRDDScanExec[T](
   }
 }
 
-/** Logical plan node for scanning data from an RDD of InternalRow. */
+/** Logical plan node for scanning data from an RDD of InternalRow.
+  * 逻辑计划节点，用于扫描来自内部行的RDD数据。
+  * */
 case class LogicalRDD(
     output: Seq[Attribute],
     rdd: RDD[InternalRow],

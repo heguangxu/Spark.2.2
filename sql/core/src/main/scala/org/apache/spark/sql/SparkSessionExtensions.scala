@@ -74,6 +74,9 @@ class SparkSessionExtensions {
   type RuleBuilder = SparkSession => Rule[LogicalPlan]
   type CheckRuleBuilder = SparkSession => LogicalPlan => Unit
   type StrategyBuilder = SparkSession => Strategy
+  // Scala中有一个type关键字，用来给类型或者是操作起别名，用起来很是方便。
+  // 后面的ParserBuilder都替换成(SparkSession, ParserInterface) => ParserInterface就一目了然了
+  // 比如创建ParserInterface的buildParser方法(从上下文可以知道这个builder就是ParserBuilder )
   type ParserBuilder = (SparkSession, ParserInterface) => ParserInterface
 
   private[this] val resolutionRuleBuilders = mutable.Buffer.empty[RuleBuilder]

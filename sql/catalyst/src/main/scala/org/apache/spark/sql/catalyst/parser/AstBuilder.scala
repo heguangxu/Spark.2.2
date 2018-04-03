@@ -44,6 +44,8 @@ import org.apache.spark.util.random.RandomSampler
 /**
  * The AstBuilder converts an ANTLR4 ParseTree into a catalyst Expression, LogicalPlan or
  * TableIdentifier.
+  *
+  * AstBuilder将ANTLR4 ParseTree转换为一个catalyst表达式、LogicalPlan或TableIdentifier。
  */
 class AstBuilder(conf: SQLConf) extends SqlBaseBaseVisitor[AnyRef] with Logging {
   import ParserUtils._
@@ -58,6 +60,9 @@ class AstBuilder(conf: SQLConf) extends SqlBaseBaseVisitor[AnyRef] with Logging 
    * Override the default behavior for all visit methods. This will only return a non-null result
    * when the context has only one child. This is done because there is no generic method to
    * combine the results of the context children. In all other cases null is returned.
+    *
+    * 覆盖所有访问方法的默认行为。当上下文只有一个孩子时，这只会返回一个非空结果。这样做是因为没有通用的
+    * 方法来组合上下文子的结果。在所有其他情况下返回null。
    */
   override def visitChildren(node: RuleNode): AnyRef = {
     if (node.getChildCount == 1) {
@@ -769,6 +774,8 @@ class AstBuilder(conf: SQLConf) extends SqlBaseBaseVisitor[AnyRef] with Logging 
    * ******************************************************************************************** */
   /**
    * Create a [[TableIdentifier]] from a 'tableName' or 'databaseName'.'tableName' pattern.
+    *
+    * 从tableName或databaseName.tableName中创建[[TableIdentifier]]。
    */
   override def visitTableIdentifier(
       ctx: TableIdentifierContext): TableIdentifier = withOrigin(ctx) {

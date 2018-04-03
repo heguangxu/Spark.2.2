@@ -41,7 +41,9 @@ trait ParserInterface {
   def parseExpression(sqlText: String): Expression
 
   /**
-   * Parse a string to a [[TableIdentifier]].  解析一个字符串为 TableIdentifier
+   * Parse a string to a [[TableIdentifier]].
+    * 解析一个字符串为 TableIdentifier
+    * 不能将文本解析为表标识符。
    */
   @throws[ParseException]("Text cannot be parsed to a TableIdentifier")
   def parseTableIdentifier(sqlText: String): TableIdentifier

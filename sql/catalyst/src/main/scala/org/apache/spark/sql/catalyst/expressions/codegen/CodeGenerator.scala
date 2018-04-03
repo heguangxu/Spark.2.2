@@ -886,7 +886,9 @@ abstract class CodeGenerator[InType <: AnyRef, OutType <: AnyRef] extends Loggin
   def generate(expressions: InType, inputSchema: Seq[Attribute]): OutType =
     generate(bind(expressions, inputSchema))
 
-  /** Generates the requested evaluator given already bound expression(s). */
+  /** Generates the requested evaluator given already bound expression(s).
+    * 生成被请求的求值器，给出已经绑定的表达式。
+    * */
   def generate(expressions: InType): OutType = create(canonicalize(expressions))
 
   /**

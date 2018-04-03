@@ -71,10 +71,6 @@ private[sql] object Dataset {
     * @return
     */
   def ofRows(sparkSession: SparkSession, logicalPlan: LogicalPlan): DataFrame = {
-    // 这里首先创建了queryExecution类对象,QueryExecution中定义了sql执行过程中的关键步骤，
-    // 是sql执行的关键类，返回一个dataframe类型的对象。QueryExecutor类中的成员都是lazy的，
-    // 被调用的时候才会执行，只有当程序中出现action算子的时候，才会调用queryExecution类中的
-    // executedPlan成员，原先生成的逻辑执行计划才会被优化器优化，并转换成物理执行计划真正的被系统调用执行。
     val qe = sparkSession.sessionState.executePlan(logicalPlan)
     qe.assertAnalyzed()
     new Dataset[Row](sparkSession, qe, RowEncoder(qe.analyzed.schema))
@@ -85,17 +81,27 @@ private[sql] object Dataset {
  * A Dataset is a strongly typed collection of domain-specific objects that can be transformed
  * in parallel using functional or relational operations. Each Dataset also has an untyped view
  * called a `DataFrame`, which is a Dataset of [[Row]].
+  *
+  * 数据集是一种强类型的域特定对象集合，可以通过功能或关系操作并行转换。每个数据集也有一个名为“DataFrame”的
+  * 非类型化视图，它是[[Row]]的数据集。
  *
  * Operations available on Datasets are divided into transformations and actions. Transformations
  * are the ones that produce new Datasets, and actions are the ones that trigger computation and
  * return results. Example transformations include map, filter, select, and aggregate (`groupBy`).
  * Example actions count, show, or writing data out to file systems.
+  *
+  * 数据集上可用的操作分为转换和操作。转换是生成新的数据集的过程，而操作是触发计算和返回结果的操作。
+  * 示例转换包括映射、筛选、选择和聚合(' groupBy ')。示例操作数、显示或将数据写入文件系统。
  *
  * Datasets are "lazy", i.e. computations are only triggered when an action is invoked. Internally,
  * a Dataset represents a logical plan that describes the computation required to produce the data.
  * When an action is invoked, Spark's query optimizer optimizes the logical plan and generates a
  * physical plan for efficient execution in a parallel and distributed manner. To explore the
  * logical plan as well as optimized physical plan, use the `explain` function.
+  *
+  * 数据集是“懒惰的”，即只有在调用操作时才触发计算。在内部，数据集表示一个逻辑计划，它描述生成数据所需的计算。
+  * 当调用一个操作时，Spark的查询优化器将优化逻辑计划，并以并行和分布式方式生成有效执行的物理计划。为了探索
+  * 合理的计划和优化的物理计划，使用“解释”功能。
  *
  * To efficiently support domain-specific objects, an [[Encoder]] is required. The encoder maps
  * the domain specific type `T` to Spark's internal type system. For example, given a class `Person`
@@ -104,9 +110,17 @@ private[sql] object Dataset {
  * often has much lower memory footprint as well as are optimized for efficiency in data processing
  * (e.g. in a columnar format). To understand the internal binary representation for data, use the
  * `schema` function.
+  *
+  * 为了有效地支持特定于域的对象，需要[[编码器]]。编码器将特定领域的“T”映射到Spark的内部类型系统。例如，
+  * 给定一个类“Person”，有两个字段，“name”(字符串)和“age”(int)，一个编码器用于告诉Spark在运行时生成代码，
+  * 将“Person”对象序列化为二进制结构。这种二进制结构通常具有更低的内存占用率，并且对数据处理效率进行了优化
+  * (例如在柱状格式中)。要理解数据的内部二进制表示，请使用“模式”函数。
  *
  * There are typically two ways to create a Dataset. The most common way is by pointing Spark
  * to some files on storage systems, using the `read` function available on a `SparkSession`.
+  *
+  * 通常有两种创建数据集的方法。最常见的方法是通过在“SparkSession”上使用“read”功能，将Spark指向存储系统上的一些文件。
+  *
  * {{{
  *   val people = spark.read.parquet("...").as[Person]  // Scala
  *   Dataset<Person> people = spark.read().parquet("...").as(Encoders.bean(Person.class)); // Java
@@ -2663,6 +2677,8 @@ class Dataset[T] private[sql](
   /**
    * Creates a local temporary view using the given name. The lifetime of this
    * temporary view is tied to the [[SparkSession]] that was used to create this Dataset.
+    *
+    * 使用给定的名称创建一个本地临时视图。此临时视图的生命周期与用于创建此数据集的[[SparkSession]]绑定。
    *
    * @group basic
    * @since 2.0.0
@@ -2710,9 +2726,11 @@ class Dataset[T] private[sql](
       viewName: String,
       replace: Boolean,
       global: Boolean): CreateViewCommand = {
+    // 两个view的区别：https://blog.csdn.net/qq_21383435/article/details/79805772
     val viewType = if (global) GlobalTempView else LocalTempView
 
     val tableIdentifier = try {
+      // 这一点 感觉像你注册一个表，这个表要找一个database，因为表是属于数据库的。唯一标识，表--》属于--》数据库（有默认值）
       sparkSession.sessionState.sqlParser.parseTableIdentifier(viewName)
     } catch {
       case _: ParseException => throw new AnalysisException(s"Invalid view name: $viewName")

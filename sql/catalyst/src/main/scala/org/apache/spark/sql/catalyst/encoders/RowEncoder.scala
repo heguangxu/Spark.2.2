@@ -33,6 +33,11 @@ import org.apache.spark.unsafe.types.UTF8String
 /**
  * A factory for constructing encoders that convert external row to/from the Spark SQL
  * internal binary representation.
+  *
+  * 用于构造将外部行 转换为 Spark SQL内部二进制表示形式的编码器的工厂。
+  *
+  * 其实就是val fields = schemaString.split(" ").map(fieldName => StructField(fieldName, StringType, nullable = true))
+  * 这句话中StringType转换成String,相当于，sparkSql是不知道你text文件的字段是什么类型的，所以需要你自己指定类型。
  *
  * The following is a mapping between Spark SQL types and its allowed external types:
  * {{{

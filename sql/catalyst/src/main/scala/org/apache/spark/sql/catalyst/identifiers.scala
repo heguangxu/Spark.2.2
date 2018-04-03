@@ -53,6 +53,9 @@ sealed trait IdentifierWithDatabase {
  * If `database` is not defined, the current database is used.
  * When we register a permanent function in the FunctionRegistry, we use
  * unquotedString as the function name.
+  *
+  * 标识数据库中的表。如果没有定义“数据库”，则使用当前数据库。当我们在FunctionRegistry中注册一个永久函数时，
+  * 我们使用unquotedString作为函数名。
  */
 case class TableIdentifier(table: String, database: Option[String])
   extends IdentifierWithDatabase {

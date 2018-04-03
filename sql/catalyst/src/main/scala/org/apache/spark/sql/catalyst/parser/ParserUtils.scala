@@ -91,6 +91,8 @@ object ParserUtils {
    * Register the origin of the context. Any TreeNode created in the closure will be assigned the
    * registered origin. This method restores the previously set origin after completion of the
    * closure.
+    *
+    * 注册上下文的来源。在闭包中创建的任何TreeNode将被分配到注册的起源。此方法在完成闭包后恢复先前设置的源。
    */
   def withOrigin[T](ctx: ParserRuleContext)(f: => T): T = {
     val current = CurrentOrigin.get

@@ -84,14 +84,18 @@ abstract class AbstractSqlParser extends ParserInterface with Logging {
     // 此时生成的逻辑执行计划成为unresolved logical plan。只是将sql串解析成类似语法树结构的执行计划，
     // 系统并不知道每个词所表示的意思，离真正能够执行还差很远
     astBuilder.visitSingleStatement(parser.singleStatement()) match {
+        // 循环每个parse的语句，如果当前语句是LogicalPlan，就返回
       case plan: LogicalPlan => plan
+        // 否则，就是不支持的SQL语句
       case _ =>
         val position = Origin(None, None)
         throw new ParseException(Option(sqlText), "Unsupported SQL statement", position, position)
     }
   }
 
-  /** Get the builder (visitor) which converts a ParseTree into an AST. */
+  /** Get the builder (visitor) which converts a ParseTree into an AST.
+    * 得到builder（visitor）将ParseTree转换为AST。
+    * */
   protected def astBuilder: AstBuilder
 
   /**

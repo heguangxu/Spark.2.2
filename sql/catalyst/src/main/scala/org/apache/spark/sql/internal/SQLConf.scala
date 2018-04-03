@@ -70,6 +70,7 @@ object SQLConf {
     .intConf
     .createWithDefault(100)
 
+  // 为true来设置内存中的列存储是否需要压缩。
   val OPTIMIZER_INSET_CONVERSION_THRESHOLD =
     buildConf("spark.sql.optimizer.inSetConversionThreshold")
       .internal()
@@ -84,6 +85,7 @@ object SQLConf {
     .booleanConf
     .createWithDefault(true)
 
+  // 来设置一次处理多少row
   val COLUMN_BATCH_SIZE = buildConf("spark.sql.inMemoryColumnarStorage.batchSize")
     .internal()
     .doc("Controls the size of batches for columnar caching.  Larger batch sizes can improve " +
@@ -137,6 +139,7 @@ object SQLConf {
     .booleanConf
     .createWithDefault(false)
 
+  // 来设置初始化的column的bufferbytes的默认大小，这里只是其中一个参数。
   val DEFAULT_SIZE_IN_BYTES = buildConf("spark.sql.defaultSizeInBytes")
     .internal()
     .doc("The default table size used in query planning. By default, it is set to Long.MaxValue " +
@@ -806,12 +809,19 @@ object SQLConf {
 
 /**
  * A class that enables the setting and getting of mutable config parameters/hints.
+  *
+  * 一个允许设置和获取可变配置参数/提示的类。
  *
  * In the presence of a SQLContext, these can be set and queried by passing SET commands
  * into Spark SQL's query functions (i.e. sql()). Otherwise, users of this class can
  * modify the hints by programmatically calling the setters and getters of this class.
+  *
+  * 在存在SQLContext时，可以通过将set命令传递到Spark SQL的查询函数(即SQL())来设置和查询这些内容。
+  * 否则，该类的用户可以通过编程调用该类的setter和getter来修改提示。
  *
  * SQLConf is thread-safe (internally synchronized, so safe to be used in multiple threads).
+  *
+  * SQLConf是线程安全的(内部同步，因此可以安全地在多个线程中使用)。
  */
 class SQLConf extends Serializable with Logging {
   import SQLConf._

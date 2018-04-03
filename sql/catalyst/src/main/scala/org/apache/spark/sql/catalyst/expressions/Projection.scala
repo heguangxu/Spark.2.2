@@ -100,7 +100,7 @@ case class InterpretedMutableProjection(expressions: Seq[Expression]) extends Mu
 }
 
 /**
- * A projection that returns UnsafeRow.
+ * A projection that returns UnsafeRow. 返回不安全的投影。
  */
 abstract class UnsafeProjection extends Projection {
   override def apply(row: InternalRow): UnsafeRow

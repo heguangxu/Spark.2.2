@@ -41,6 +41,11 @@ sealed trait ViewType {
  * LocalTempView means session-scoped local temporary views. Its lifetime is the lifetime of the
  * session that created it, i.e. it will be automatically dropped when the session terminates. It's
  * not tied to any databases, i.e. we can't use `db1.view1` to reference a local temporary view.
+  *
+  * LocalTempView的意思是会话范围的本地临时视图。它的生命周期是创建它的会话的生命周期，也就是说，
+  * 当会话终止时它将被自动删除。它没有绑定到任何数据库，即我们不能使用db1.view1引用一个本地临时视图。
+  *
+  * // 两个view的区别：https://blog.csdn.net/qq_21383435/article/details/79805772
  */
 object LocalTempView extends ViewType
 
@@ -49,6 +54,12 @@ object LocalTempView extends ViewType
  * Spark application, i.e. it will be automatically dropped when the application terminates. It's
  * tied to a system preserved database `global_temp`, and we must use the qualified name to refer a
  * global temp view, e.g. SELECT * FROM global_temp.view1.
+  *
+  * GlobalTempView意味着跨会话全局临时视图。它的生命周期是Spark应用程序的生命周期，即当应用程序终止时，
+  * 它将自动删除。它绑定到一个保存数据库“global_temp”的系统，我们必须使用限定名来引用全局临时视图，
+  * 例如 SELECT * FROM global_temp.view1。
+  *
+  * // 两个view的区别：https://blog.csdn.net/qq_21383435/article/details/79805772
  */
 object GlobalTempView extends ViewType
 

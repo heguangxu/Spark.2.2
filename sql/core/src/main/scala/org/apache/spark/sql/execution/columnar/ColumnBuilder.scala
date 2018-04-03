@@ -144,10 +144,17 @@ private[columnar] object ColumnBuilder {
   val DEFAULT_INITIAL_BUFFER_SIZE = 128 * 1024
   val MAX_BATCH_SIZE_IN_BYTE = 4 * 1024 * 1024L
 
+  /**
+    * 主要是操作buffer，如果要追加的数据大于剩余空间，就扩大buffer。
+    * 确保剩余空间能容下，如果剩余空间小于 要放入的大小，则重新分配一看内存空间
+    * @param orig
+    * @param size
+    * @return
+    */
   private[columnar] def ensureFreeSpace(orig: ByteBuffer, size: Int) = {
-    if (orig.remaining >= size) {
+    if (orig.remaining >= size) { //当前buffer剩余空间比要追加的数据大，则什么都不做，返回自身
       orig
-    } else {
+    } else { //否则扩容
       // grow in steps of initial size
       val capacity = orig.capacity()
       val newSize = capacity + size.max(capacity)

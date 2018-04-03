@@ -90,6 +90,9 @@ class SQLContext private[sql](val sparkSession: SparkSession)
    * Returns a [[SQLContext]] as new session, with separated SQL configurations, temporary
    * tables, registered functions, but sharing the same `SparkContext`, cached data and
    * other things.
+    *
+    * 返回一个SQLContext作为一个新的会话session，使用不同的Sql配置，临时表，注册的函数
+    * 但是共同分享相同的SparkContext，缓存的data以及其他东西
    *
    * @since 1.6.0
    */

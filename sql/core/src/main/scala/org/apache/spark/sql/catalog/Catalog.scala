@@ -28,6 +28,7 @@ import org.apache.spark.sql.types.StructType
  * Catalog interface for Spark. To access this, use `SparkSession.catalog`.
   *
   * Catalog:字典表，用于注册表，对表缓存后便于查询
+  * catalog:的意思是目录
  *
  * @since 2.0.0
  */
@@ -36,6 +37,7 @@ abstract class Catalog {
 
   /**
    * Returns the current default database in this session.
+    * 在这个会话中返回当前的默认数据库。
    *
    * @since 2.0.0
    */
@@ -43,13 +45,14 @@ abstract class Catalog {
 
   /**
    * Sets the current default database in this session.
-   *
+   * 在这个会话中设置当前的默认数据库。
    * @since 2.0.0
    */
   def setCurrentDatabase(dbName: String): Unit
 
   /**
    * Returns a list of databases available across all sessions.
+    * 返回所有会话中可用的数据库列表。
    *
    * @since 2.0.0
    */
@@ -58,6 +61,8 @@ abstract class Catalog {
   /**
    * Returns a list of tables/views in the current database.
    * This includes all temporary views.
+    *
+    * 返回当前数据库的表列表，包括临时视图
    *
    * @since 2.0.0
    */
@@ -66,6 +71,8 @@ abstract class Catalog {
   /**
    * Returns a list of tables/views in the specified database.
    * This includes all temporary views.
+    *
+    * 返回一个指定数据库的table和视图
    *
    * @since 2.0.0
    */
@@ -75,6 +82,8 @@ abstract class Catalog {
   /**
    * Returns a list of functions registered in the current database.
    * This includes all temporary functions
+    *
+    * 返回当前  数据库的函数列表，包括临时函数
    *
    * @since 2.0.0
    */
@@ -84,6 +93,8 @@ abstract class Catalog {
    * Returns a list of functions registered in the specified database.
    * This includes all temporary functions
    *
+    * 返回指定数据库的函数列表，包括临时函数
+    *
    * @since 2.0.0
    */
   @throws[AnalysisException]("database does not exist")
@@ -91,6 +102,8 @@ abstract class Catalog {
 
   /**
    * Returns a list of columns for the given table/view or temporary view.
+    *
+    * 返回给定表/视图或临时视图的 列 列表。
    *
    * @param tableName is either a qualified or unqualified name that designates a table/view.
    *                  If no database identifier is provided, it refers to a temporary view or
@@ -103,6 +116,8 @@ abstract class Catalog {
   /**
    * Returns a list of columns for the given table/view in the specified database.
    *
+    * 返回指定数据库中给定表/视图的列列表。
+    *
    * @param dbName is a name that designates a database.
    * @param tableName is an unqualified name that designates a table/view.
    * @since 2.0.0
@@ -113,6 +128,8 @@ abstract class Catalog {
   /**
    * Get the database with the specified name. This throws an AnalysisException when the database
    * cannot be found.
+    *
+    * 获取具有指定名称的数据库。当无法找到数据库时，就会抛出一个AnalysisException。
    *
    * @since 2.1.0
    */
@@ -122,6 +139,8 @@ abstract class Catalog {
   /**
    * Get the table or view with the specified name. This table can be a temporary view or a
    * table/view. This throws an AnalysisException when no Table can be found.
+    *
+    * 使用指定的名称获取表或视图。此表可以是临时视图或表/视图。当无法找到表时，就会抛出一个AnalysisException。
    *
    * @param tableName is either a qualified or unqualified name that designates a table/view.
    *                  If no database identifier is provided, it refers to a table/view in
@@ -134,6 +153,8 @@ abstract class Catalog {
   /**
    * Get the table or view with the specified name in the specified database. This throws an
    * AnalysisException when no Table can be found.
+    *
+    * 在指定的数据库中使用指定的名称获取表或视图。当无法找到表时，就会抛出一个AnalysisException。
    *
    * @since 2.1.0
    */
@@ -143,6 +164,8 @@ abstract class Catalog {
   /**
    * Get the function with the specified name. This function can be a temporary function or a
    * function. This throws an AnalysisException when the function cannot be found.
+    *
+    * 获取具有指定名称的函数。这个函数可以是一个临时函数，也可以是一个函数。当无法找到函数时，就会抛出一个AnalysisException。
    *
    * @param functionName is either a qualified or unqualified name that designates a function.
    *                     If no database identifier is provided, it refers to a temporary function
@@ -165,6 +188,8 @@ abstract class Catalog {
 
   /**
    * Check if the database with the specified name exists.
+    *
+    * 检查具有指定名称的数据库是否存在。
    *
    * @since 2.1.0
    */
@@ -173,6 +198,8 @@ abstract class Catalog {
   /**
    * Check if the table or view with the specified name exists. This can either be a temporary
    * view or a table/view.
+    * 检查具有指定名称的表或视图是否存在。这可以是临时视图，也可以是表/视图。
+    *
    *
    * @param tableName is either a qualified or unqualified name that designates a table/view.
    *                  If no database identifier is provided, it refers to a table/view in
@@ -183,6 +210,8 @@ abstract class Catalog {
 
   /**
    * Check if the table or view with the specified name exists in the specified database.
+    *
+    * 检查指定数据库中是否存在指定名称的表或视图。
    *
    * @param dbName is a name that designates a database.
    * @param tableName is an unqualified name that designates a table.
@@ -194,6 +223,8 @@ abstract class Catalog {
    * Check if the function with the specified name exists. This can either be a temporary function
    * or a function.
    *
+    * 检查具有指定名称的函数是否存在。这可以是一个临时函数，也可以是一个函数。
+    *
    * @param functionName is either a qualified or unqualified name that designates a function.
    *                     If no database identifier is provided, it refers to a function in
    *                     the current database.
@@ -203,6 +234,8 @@ abstract class Catalog {
 
   /**
    * Check if the function with the specified name exists in the specified database.
+    *
+    * 检查指定数据库中是否具有指定名称的函数。
    *
    * @param dbName is a name that designates a database.
    * @param functionName is an unqualified name that designates a function.
@@ -213,6 +246,8 @@ abstract class Catalog {
   /**
    * Creates a table from the given path and returns the corresponding DataFrame.
    * It will use the default data source configured by spark.sql.sources.default.
+    *
+    * 从给定的路径创建一个表并返回相应的DataFrame。它将使用sparksql .sources.default配置的默认数据源。
    *
    * @param tableName is either a qualified or unqualified name that designates a table.
    *                  If no database identifier is provided, it refers to a table in
@@ -228,6 +263,8 @@ abstract class Catalog {
    * :: Experimental ::
    * Creates a table from the given path and returns the corresponding DataFrame.
    * It will use the default data source configured by spark.sql.sources.default.
+    *
+    * 从给定的路径创建一个表并返回相应的DataFrame。它将使用sparksql .sources.default配置的默认数据源。
    *
    * @param tableName is either a qualified or unqualified name that designates a table.
    *                  If no database identifier is provided, it refers to a table in
@@ -241,6 +278,7 @@ abstract class Catalog {
   /**
    * Creates a table from the given path based on a data source and returns the corresponding
    * DataFrame.
+    * 根据数据源从给定的路径创建一个表，并返回相应的dataframe。
    *
    * @param tableName is either a qualified or unqualified name that designates a table.
    *                  If no database identifier is provided, it refers to a table in
@@ -460,6 +498,8 @@ abstract class Catalog {
 
   /**
    * Returns true if the table is currently cached in-memory.
+    *
+    * 返回true如果当前表被缓存到内存中
    *
    * @param tableName is either a qualified or unqualified name that designates a table/view.
    *                  If no database identifier is provided, it refers to a temporary view or
@@ -470,6 +510,8 @@ abstract class Catalog {
 
   /**
    * Caches the specified table in-memory.
+    *
+    * 缓存指定的表到内存中
    *
    * @param tableName is either a qualified or unqualified name that designates a table/view.
    *                  If no database identifier is provided, it refers to a temporary view or
@@ -480,6 +522,8 @@ abstract class Catalog {
 
   /**
    * Removes the specified table from the in-memory cache.
+    *
+    * 从内存中移除缓存的表
    *
    * @param tableName is either a qualified or unqualified name that designates a table/view.
    *                  If no database identifier is provided, it refers to a temporary view or
@@ -490,6 +534,8 @@ abstract class Catalog {
 
   /**
    * Removes all cached tables from the in-memory cache.
+    *
+    * 移除所有在内存缓存的表
    *
    * @since 2.0.0
    */
@@ -500,9 +546,14 @@ abstract class Catalog {
    * reasons, Spark SQL or the external data source library it uses might cache certain metadata
    * about a table, such as the location of blocks. When those change outside of Spark SQL, users
    * should call this function to invalidate the cache.
+    *
+    * 无效并刷新给定表的所有缓存数据和元数据。出于性能原因，Spark SQL或它使用的外部数据源库可能会缓存一些
+    * 关于表的元数据，比如块的位置。在Spark SQL之外的更改时，用户应该调用该函数来使缓存无效。
    *
    * If this table is cached as an InMemoryRelation, drop the original cached version and make the
    * new version cached lazily.
+    *
+    * 如果将此表作为内存关系缓存，则删除原始缓存版本，并使新版本缓存在缓存。
    *
    * @param tableName is either a qualified or unqualified name that designates a table/view.
    *                  If no database identifier is provided, it refers to a temporary view or
@@ -515,6 +566,9 @@ abstract class Catalog {
    * Invalidates and refreshes all the cached data (and the associated metadata) for any `Dataset`
    * that contains the given data source path. Path matching is by prefix, i.e. "/" would invalidate
    * everything that is cached.
+    *
+    * 对包含给定数据源路径的任何“数据集”的所有缓存数据(以及相关的元数据)进行无效和刷新。路径匹配是通过前缀，即。
+    * “/”将使所有缓存的内容失效。
    *
    * @since 2.0.0
    */

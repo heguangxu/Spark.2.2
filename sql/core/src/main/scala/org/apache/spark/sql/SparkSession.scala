@@ -315,6 +315,10 @@ class SparkSession private(
    * Creates a `DataFrame` from an `RDD` containing [[Row]]s using the given schema.
    * It is important to make sure that the structure of every [[Row]] of the provided RDD matches
    * the provided schema. Otherwise, there will be runtime exception.
+    *
+    * 使用给定的模式从包含[[Row]]的“RDD”中创建“DataFrame”。重要的是要确保提供的RDD的每个[[行]]的结构与所提供的模式相匹配。
+    * 否则，将有运行时异常。
+    *
    * Example:
    * {{{
    *  import org.apache.spark.sql._
@@ -590,6 +594,9 @@ class SparkSession private(
   /**
    * Creates a `DataFrame` from an RDD[Row].
    * User can specify whether the input rows should be converted to Catalyst rows.
+    *
+    * 从RDD[Row]创建一个DataFrame
+    * 用户可以指定输入行是否应该转换为Catalyst行。
    */
   private[sql] def createDataFrame(
       rowRDD: RDD[Row],
@@ -597,7 +604,10 @@ class SparkSession private(
       needsConversion: Boolean) = {
     // TODO: use MutableProjection when rowRDD is another DataFrame and the applied
     // schema differs from the existing schema on any field data type.
+    // 模式不同于任何字段数据类型上的现有模式。
+    // 默认为needsConversion = true
     val catalystRows = if (needsConversion) {
+      // 主要是每列数据的类型指定对应关系
       val encoder = RowEncoder(schema)
       rowRDD.map(encoder.toRow)
     } else {

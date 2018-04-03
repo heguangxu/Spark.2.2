@@ -39,6 +39,7 @@ object SparkSQLExample {
     // $example on:init_session$
     val spark = SparkSession
       .builder()
+      .master("local")
       .appName("Spark SQL basic example")
       .config("spark.some.config.option", "some-value")
       .getOrCreate()
@@ -47,9 +48,9 @@ object SparkSQLExample {
     import spark.implicits._
     // $example off:init_session$
 
-    runBasicDataFrameExample(spark)
-    runDatasetCreationExample(spark)
-    runInferSchemaExample(spark)
+    //runBasicDataFrameExample(spark)
+    //runDatasetCreationExample(spark)
+    //runInferSchemaExample(spark)
     runProgrammaticSchemaExample(spark)
 
     spark.stop()
