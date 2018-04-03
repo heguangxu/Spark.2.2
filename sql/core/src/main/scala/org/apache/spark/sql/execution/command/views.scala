@@ -67,9 +67,14 @@ object GlobalTempView extends ViewType
  * PersistedView means cross-session persisted views. Persisted views stay until they are
  * explicitly dropped by user command. It's always tied to a database, default to the current
  * database if not specified.
+  *
+  * PersistedView意味着跨会话持久化视图。持久化视图的生命周期是直到用户命令显式地删除它们为止。它总是绑定到数据库，
+  * 如果没有指定，则默认为当前数据库。
  *
  * Note that, Existing persisted view with the same name are not visible to the current session
  * while the local temporary view exists, unless the view name is qualified by database.
+  *
+  * 注意，当前会话中不可见具有相同名称的现有持久化视图，而本地临时视图存在，除非数据库对视图名称进行了限定。
  */
 object PersistedView extends ViewType
 
@@ -78,21 +83,30 @@ object PersistedView extends ViewType
  * Create or replace a view with given query plan. This command will generate some view-specific
  * properties(e.g. view default database, view query output column names) and store them as
  * properties in metastore, if we need to create a permanent view.
+  *
+  * 用给定的查询计划创建或替换一个视图。这个命令将生成一些特定于视图的属性（例如：查看默认数据库，查看输出的列）和
+  * 把他们作为属性存储，如果我们需要创建一个永久的视图。
  *
- * @param name the name of this view.
+ * @param name the name of this view.   视图名称
  * @param userSpecifiedColumns the output column names and optional comments specified by users,
  *                             can be Nil if not specified.
+  *                             用户指定的输出列名称和可选注释，如果没有指定，可以为Nil。
  * @param comment the comment of this view.
  * @param properties the properties of this view.
  * @param originalText the original SQL text of this view, can be None if this view is created via
  *                     Dataset API.
+  *                     如果这个视图是通过Dataset API创建的，那么这个视图的原始SQL文本就不存在了。
  * @param child the logical plan that represents the view; this is used to generate the logical
  *              plan for temporary view and the view schema.
+  *              代表视图的逻辑计划;这用于生成临时视图和视图模式的逻辑计划。
  * @param allowExisting if true, and if the view already exists, noop; if false, and if the view
  *                already exists, throws analysis exception.
+  *                如果视图已经存在，是true noop; 如果视图已经存在，抛出分析异常。
  * @param replace if true, and if the view already exists, updates it; if false, and if the view
  *                already exists, throws analysis exception.
+  *                如果为true，而且视图已经存在，就更新它，如果为false，而且视图已经存在，就抛出异常
  * @param viewType the expected view type to be created with this command.
+  *                 使用此命令创建的预期视图类型。
  */
 case class CreateViewCommand(
     name: TableIdentifier,
@@ -118,15 +132,18 @@ case class CreateViewCommand(
     throw new AnalysisException("CREATE VIEW with both IF NOT EXISTS and REPLACE is not allowed.")
   }
 
+  // 貌似只能为false
   private def isTemporary = viewType == LocalTempView || viewType == GlobalTempView
 
   // Disallows 'CREATE TEMPORARY VIEW IF NOT EXISTS' to be consistent with 'CREATE TEMPORARY TABLE'
+  // 如果允许已经存在  和 临时表
   if (allowExisting && isTemporary) {
     throw new AnalysisException(
       "It is not allowed to define a TEMPORARY view with IF NOT EXISTS.")
   }
 
   // Temporary view names should NOT contain database prefix like "database.table"
+  // 临时视图名称不应包含数据库前缀，如“database.table”。
   if (isTemporary && name.database.isDefined) {
     val database = name.database.get
     throw new AnalysisException(
@@ -135,10 +152,14 @@ case class CreateViewCommand(
 
   override def run(sparkSession: SparkSession): Seq[Row] = {
     // If the plan cannot be analyzed, throw an exception and don't proceed.
+    // 如果计划不能被分析，抛出一个异常，不要继续。
     val qe = sparkSession.sessionState.executePlan(child)
+    // 大概是检查一个逻辑计划是否能运行，遇到第一个解析错误就停止
     qe.assertAnalyzed()
+    // 调用analyzer解析器,重点
     val analyzedPlan = qe.analyzed
 
+    // 如果用户使用 CREATE VIEW (）指定的column和SELECT * 方法分析出来的column列数量不一致，抛出异常
     if (userSpecifiedColumns.nonEmpty &&
         userSpecifiedColumns.length != analyzedPlan.output.length) {
       throw new AnalysisException(s"The number of columns produced by the SELECT clause " +
@@ -148,22 +169,35 @@ case class CreateViewCommand(
 
     // When creating a permanent view, not allowed to reference temporary objects.
     // This should be called after `qe.assertAnalyzed()` (i.e., `child` can be resolved)
+    //
+    // 在创建永久视图时，不允许引用临时对象。这应该在“qe. assertanalysis()”之后调用。“孩子”可以解决
     verifyTemporaryObjectsNotExists(sparkSession)
 
     val catalog = sparkSession.sessionState.catalog
+    // 如果是本地临时视图
     if (viewType == LocalTempView) {
       val aliasedPlan = aliasPlan(sparkSession, analyzedPlan)
       catalog.createTempView(name.table, aliasedPlan, overrideIfExists = replace)
+
+      // 如果是全局视图
     } else if (viewType == GlobalTempView) {
       val aliasedPlan = aliasPlan(sparkSession, analyzedPlan)
       catalog.createGlobalTempView(name.table, aliasedPlan, overrideIfExists = replace)
+
+      // 如果该视图已经在数据库中存在
     } else if (catalog.tableExists(name)) {
       val tableMetadata = catalog.getTableMetadata(name)
+
+      // 如果已经存在，则不做处理
       if (allowExisting) {
         // Handles `CREATE VIEW IF NOT EXISTS v0 AS SELECT ...`. Does nothing when the target view
         // already exists.
+
+        // 不是一个视图
       } else if (tableMetadata.tableType != CatalogTableType.VIEW) {
         throw new AnalysisException(s"$name is not a view")
+
+        // 如果允许视图替换
       } else if (replace) {
         // Detect cyclic view reference on CREATE OR REPLACE VIEW.
         val viewIdent = tableMetadata.identifier
@@ -181,7 +215,7 @@ case class CreateViewCommand(
             "please use ALTER VIEW AS or CREATE OR REPLACE VIEW AS")
       }
     } else {
-      // Create the view if it doesn't exist.
+      // Create the view if it doesn't exist.  如果视图不存在，就创建它
       catalog.createTable(prepareTable(sparkSession, analyzedPlan), ignoreIfExists = false)
     }
     Seq.empty[Row]
@@ -189,6 +223,8 @@ case class CreateViewCommand(
 
   /**
    * Permanent views are not allowed to reference temp objects, including temp function and views
+    *
+    * 永久视图不允许引用temp对象，包括temp函数和视图。
    */
   private def verifyTemporaryObjectsNotExists(sparkSession: SparkSession): Unit = {
     if (!isTemporary) {

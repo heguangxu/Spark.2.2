@@ -34,6 +34,8 @@ import org.apache.spark.sql.types._
 /**
  * A logical command that is executed for its side-effects.  `RunnableCommand`s are
  * wrapped in `ExecutedCommand` during execution.
+  *
+  * 为其副作用而执行的逻辑命令。“RunnableCommand”在执行过程中被“ExecutedCommand”包裹。
  */
 trait RunnableCommand extends logical.Command {
   def run(sparkSession: SparkSession): Seq[Row]

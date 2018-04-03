@@ -47,8 +47,11 @@ class QueryExecution(val sparkSession: SparkSession, val logical: LogicalPlan) {
   def assertAnalyzed(): Unit = {
     // Analyzer is invoked outside the try block to avoid calling it again from within the
     // catch block below.
+    //
+    // 分析器在try块外部调用，以避免在下面的catch块中再次调用它。
     analyzed
     try {
+      // 大概是检查一个逻辑计划是否能运行，遇到第一个解析错误就停止
       sparkSession.sessionState.analyzer.checkAnalysis(analyzed)
     } catch {
       case e: AnalysisException =>

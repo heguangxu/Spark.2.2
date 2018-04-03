@@ -72,9 +72,15 @@ trait CheckAnalysis extends PredicateHelper {
     }
   }
 
+  /**
+    * 大概是检查一个逻辑计划是否能运行，遇到第一个解析错误就停止
+    * @param plan
+    */
   def checkAnalysis(plan: LogicalPlan): Unit = {
     // We transform up and order the rules so as to catch the first possible failure instead
     // of the result of cascading resolution failures.
+    //
+    // 我们对规则进行转换和排序，以捕捉第一个可能的失败，而不是级联解析失败的结果。
     plan.foreachUp {
       case p if p.analyzed => // Skip already analyzed sub-plans
 

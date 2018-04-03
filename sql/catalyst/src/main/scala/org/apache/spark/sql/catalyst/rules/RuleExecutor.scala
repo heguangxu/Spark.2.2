@@ -67,8 +67,11 @@ abstract class RuleExecutor[TreeType <: TreeNode[_]] extends Logging {
   /**
    * Executes the batches of rules defined by the subclass. The batches are executed serially
    * using the defined execution strategy. Within each batch, rules are also executed serially.
+    *
+    * 执行由子类定义的批次。批量使用已定义的执行策略进行串行执行。在每个批处理中，还将串行地执行规则。
    */
   def execute(plan: TreeType): TreeType = {
+    // 这是一个logical
     var curPlan = plan
 
     batches.foreach { batch =>
@@ -78,6 +81,8 @@ abstract class RuleExecutor[TreeType <: TreeNode[_]] extends Logging {
       var continue = true
 
       // Run until fix point (or the max number of iterations as specified in the strategy.
+      //
+      // 运行到fix point(或者策略中指定的最大迭代次数)。
       while (continue) {
         curPlan = batch.rules.foldLeft(curPlan) {
           case (plan, rule) =>
