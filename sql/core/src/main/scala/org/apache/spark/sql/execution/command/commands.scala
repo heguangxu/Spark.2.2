@@ -44,6 +44,8 @@ trait RunnableCommand extends logical.Command {
 /**
  * A physical operator that executes the run method of a `RunnableCommand` and
  * saves the result to prevent multiple executions.
+  *
+  * 执行“RunnableCommand”运行方法并保存结果以防止多次执行的物理操作符。
  */
 case class ExecutedCommandExec(cmd: RunnableCommand) extends SparkPlan {
   /**
@@ -54,6 +56,10 @@ case class ExecutedCommandExec(cmd: RunnableCommand) extends SparkPlan {
    *
    * The `execute()` method of all the physical command classes should reference `sideEffectResult`
    * so that the command can be executed eagerly right after the command query is created.
+    *
+    * 一个具体的命令应该覆盖这个懒惰的字段，以总结由命令或任何其他计算所导致的任何副作用，而这些计算应该只计算一次。
+    * 该字段的值可以作为该命令的物理计划生成的相应RDD的内容。所有物理命令类的“execute()”方法都应该引用“sideEffectResult”，
+    * 以便在创建命令查询后立即执行命令。
    */
   protected[sql] lazy val sideEffectResult: Seq[InternalRow] = {
     val converter = CatalystTypeConverters.createToCatalystConverter(schema)

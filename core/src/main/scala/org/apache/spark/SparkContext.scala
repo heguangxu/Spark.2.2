@@ -1096,6 +1096,7 @@ class SparkContext(config: SparkConf) extends Logging {
   def textFile(
       path: String,
       minPartitions: Int = defaultMinPartitions): RDD[String] = withScope {
+    // 判断sparkContext是否已经停止了
     assertNotStopped()
     hadoopFile(path, classOf[TextInputFormat], classOf[LongWritable], classOf[Text],
       minPartitions).map(pair => pair._2.toString).setName(path)

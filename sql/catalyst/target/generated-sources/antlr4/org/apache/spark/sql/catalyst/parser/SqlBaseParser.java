@@ -256,6 +256,7 @@ public class SqlBaseParser extends Parser {
 	  }
 
 	public SqlBaseParser(TokenStream input) {
+	      // 调用父类的
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}

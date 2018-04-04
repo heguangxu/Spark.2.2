@@ -2729,8 +2729,10 @@ class Dataset[T] private[sql](
     // 两个view的区别：https://blog.csdn.net/qq_21383435/article/details/79805772
     val viewType = if (global) GlobalTempView else LocalTempView
 
+    // 这个传入表名people最后还是表名people
     val tableIdentifier = try {
       // 这一点 感觉像你注册一个表，这个表要找一个database，因为表是属于数据库的。唯一标识，表--》属于--》数据库（有默认值）
+      // 这里先进入Parser方法
       sparkSession.sessionState.sqlParser.parseTableIdentifier(viewName)
     } catch {
       case _: ParseException => throw new AnalysisException(s"Invalid view name: $viewName")

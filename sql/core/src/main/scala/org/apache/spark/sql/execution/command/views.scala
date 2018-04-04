@@ -176,7 +176,9 @@ case class CreateViewCommand(
     val catalog = sparkSession.sessionState.catalog
     // 如果是本地临时视图
     if (viewType == LocalTempView) {
+      //
       val aliasedPlan = aliasPlan(sparkSession, analyzedPlan)
+      // 主要是将表名和对应的逻辑计划关系 放到map
       catalog.createTempView(name.table, aliasedPlan, overrideIfExists = replace)
 
       // 如果是全局视图
@@ -218,6 +220,8 @@ case class CreateViewCommand(
       // Create the view if it doesn't exist.  如果视图不存在，就创建它
       catalog.createTable(prepareTable(sparkSession, analyzedPlan), ignoreIfExists = false)
     }
+
+    //
     Seq.empty[Row]
   }
 
@@ -254,9 +258,15 @@ case class CreateViewCommand(
   /**
    * If `userSpecifiedColumns` is defined, alias the analyzed plan to the user specified columns,
    * else return the analyzed plan directly.
+    *
+    * 如果定义了“userSpecifiedColumns”，将分析后的计划别名为用户指定的列，否则直接返回分析的计划。
+    *
+    * 大概就是指定列为空，进行那个plan操作，如果不为空，将指定列绑定到plan，并修改列名等操作
    */
   private def aliasPlan(session: SparkSession, analyzedPlan: LogicalPlan): LogicalPlan = {
+    // userSpecifiedColumns:用户指定的输出列名称和可选注释，如果没有指定，可以为Nil。
     if (userSpecifiedColumns.isEmpty) {
+      // 当用户只传入表名的时候，比如people，这里因为没有指明列名，所以会直接返回
       analyzedPlan
     } else {
       val projectList = analyzedPlan.output.zip(userSpecifiedColumns).map {

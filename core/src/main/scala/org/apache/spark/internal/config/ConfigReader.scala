@@ -88,11 +88,14 @@ private[spark] class ConfigReader(conf: ConfigProvider) {
 
   /**
    * Perform variable substitution on the given input string.
+    * 在给定的输入字符串上执行变量替换。
    */
   def substitute(input: String): String = substitute(input, Set())
 
   private def substitute(input: String, usedRefs: Set[String]): String = {
+    // 如果SQL语句不是空的
     if (input != null) {
+      // 正则表达式，替换内容
       ConfigReader.REF_RE.replaceAllIn(input, { m =>
         val prefix = m.group(1)
         val name = m.group(2)

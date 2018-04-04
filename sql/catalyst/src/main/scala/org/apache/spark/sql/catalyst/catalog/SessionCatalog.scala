@@ -51,6 +51,9 @@ object SessionCatalog {
  * tables and functions of the Spark Session that it belongs to.
  *
  * This class must be thread-safe.
+  *
+  * Spark会话使用的内部目录。该内部目录作为基础转移的代理(例如，蜂窝转移)，它还管理它所属的Spark会话的临时表和函数。
+  * 这个类必须是线程安全的。
  */
 class SessionCatalog(
     val externalCatalog: ExternalCatalog,
@@ -86,7 +89,11 @@ class SessionCatalog(
       new SQLConf().copy(SQLConf.CASE_SENSITIVE -> true))
   }
 
-  /** List of temporary tables, mapping from table name to their logical plan. */
+  /** List of temporary tables, mapping from table name to their logical plan.
+    * 临时表的列表，从表名映射到它们的逻辑计划。
+    *
+    * 表名 -- 逻辑计划
+    * */
   @GuardedBy("this")
   protected val tempTables = new mutable.HashMap[String, LogicalPlan]
 
@@ -114,8 +121,11 @@ class SessionCatalog(
 
   /**
    * Format table name, taking into account case sensitivity.
+    *
+    * 格式表名，考虑到案例的敏感性。
    */
   protected[this] def formatTableName(name: String): String = {
+    // 大小写是否敏感，默认不敏感为false,这里把表名转化成小写了
     if (conf.caseSensitiveAnalysis) name else name.toLowerCase(Locale.ROOT)
   }
 
@@ -462,15 +472,19 @@ class SessionCatalog(
 
   /**
    * Create a local temporary view.
+    * 创建一个本地临时视图。
    */
   def createTempView(
       name: String,
       tableDefinition: LogicalPlan,
       overrideIfExists: Boolean): Unit = synchronized {
+    // 主要是判断大小写是否敏感，默认不敏感，将表名转化成小写
     val table = formatTableName(name)
+    // 如果临时表已经创建，并且不允许覆盖，则抛出异常
     if (tempTables.contains(table) && !overrideIfExists) {
       throw new TempTableAlreadyExistsException(name)
     }
+    // 添加到 表名 -- 逻辑计划 映射map里
     tempTables.put(table, tableDefinition)
   }
 

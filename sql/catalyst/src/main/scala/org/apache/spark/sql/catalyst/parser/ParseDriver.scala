@@ -116,7 +116,7 @@ abstract class AbstractSqlParser extends ParserInterface with Logging {
     lexer.addErrorListener(ParseErrorListener)
 
     val tokenStream = new CommonTokenStream(lexer)
-    // 创建SqlBaseParser语法解析器
+    // 创建SqlBaseParser语法解析器，这一点会先调用SqlBaseParser的构造函数，然后调用父类的super(input)
     val parser = new SqlBaseParser(tokenStream)
     parser.addParseListener(PostProcessor)
     parser.removeErrorListeners()

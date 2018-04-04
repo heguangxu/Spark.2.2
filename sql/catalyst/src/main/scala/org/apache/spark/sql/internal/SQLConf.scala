@@ -183,6 +183,10 @@ object SQLConf {
       .booleanConf
       .createWithDefault(true)
 
+  /**
+    * spark.sql.caseSensitive  大小写是否敏感
+    * 查询分析器是否应该区分大小写。默认为不区分大小写。对于区分大小写的模式，我们非常不鼓励。
+    */
   val CASE_SENSITIVE = buildConf("spark.sql.caseSensitive")
     .internal()
     .doc("Whether the query analyzer should be case sensitive or not. " +
@@ -582,6 +586,10 @@ object SQLConf {
       .booleanConf
       .createWithDefault(true)
 
+  /**
+    * spark.sql.variable.substitute  是否进行变量替换，这个好有趣，不替换有用吗？必须是替换的啊
+    * 这可以使用像${var} ${system:var}和${env:var}这样的语法进行替换。
+    */
   val VARIABLE_SUBSTITUTE_ENABLED =
     buildConf("spark.sql.variable.substitute")
       .doc("This enables substitution using syntax like ${var} ${system:var} and ${env:var}.")
@@ -931,6 +939,7 @@ class SQLConf extends Serializable with Logging {
 
   def exchangeReuseEnabled: Boolean = getConf(EXCHANGE_REUSE_ENABLED)
 
+  // 大小写是否敏感，默认不敏感为false
   def caseSensitiveAnalysis: Boolean = getConf(SQLConf.CASE_SENSITIVE)
 
   def constraintPropagationEnabled: Boolean = getConf(CONSTRAINT_PROPAGATION_ENABLED)
@@ -1012,6 +1021,7 @@ class SQLConf extends Serializable with Logging {
 
   def enableTwoLevelAggMap: Boolean = getConf(ENABLE_TWOLEVEL_AGG_MAP)
 
+  // park.sql.variable.substitute  是否进行变量替换
   def useObjectHashAggregation: Boolean = getConf(USE_OBJECT_HASH_AGG)
 
   def objectAggSortBasedFallbackThreshold: Int = getConf(OBJECT_AGG_SORT_BASED_FALLBACK_THRESHOLD)
