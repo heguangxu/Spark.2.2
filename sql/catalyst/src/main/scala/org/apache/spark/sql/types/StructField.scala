@@ -23,12 +23,13 @@ import org.json4s.JsonDSL._
 import org.apache.spark.annotation.InterfaceStability
 
 /**
- * A field inside a StructType.
- * @param name The name of this field.
- * @param dataType The data type of this field.
- * @param nullable Indicates if values of this field can be `null` values.
+ * A field inside a StructType. 结构内的一个字段。
+ * @param name The name of this field.          这个字段的名称。
+ * @param dataType The data type of this field. 这个字段的数据
+ * @param nullable Indicates if values of this field can be `null` values.    表示该字段的值是否为“空”值。
  * @param metadata The metadata of this field. The metadata should be preserved during
  *                 transformation if the content of the column is not modified, e.g, in selection.
+  *                 该字段的元数据。如果不修改列的内容，则在转换过程中保存元数据。g,在选择。
  *
  * @since 1.3.0
  */
@@ -39,7 +40,7 @@ case class StructField(
     nullable: Boolean = true,
     metadata: Metadata = Metadata.empty) {
 
-  /** No-arg constructor for kryo. */
+  /** No-arg constructor for kryo.  kryo的无参数构造函数。 */
   protected def this() = this(null, null)
 
   private[sql] def buildFormattedString(prefix: String, builder: StringBuilder): Unit = {
@@ -59,6 +60,7 @@ case class StructField(
 
   /**
    * Updates the StructField with a new comment value.
+    * 用新的注释值更新StructField。
    */
   def withComment(comment: String): StructField = {
     val newMetadata = new MetadataBuilder()
@@ -70,6 +72,7 @@ case class StructField(
 
   /**
    * Return the comment of this StructField.
+    * 返回该结构字段的注释。
    */
   def getComment(): Option[String] = {
     if (metadata.contains("comment")) Option(metadata.getString("comment")) else None

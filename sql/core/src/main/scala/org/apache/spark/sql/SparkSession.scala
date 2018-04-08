@@ -91,6 +91,7 @@ class SparkSession private(
 
   /**
    * The version of Spark on which this application is running.
+    * 此应用程序正在运行的Spark版本。
    *
    * @since 2.0.0
    */
@@ -147,6 +148,8 @@ class SparkSession private(
 
   /**
    * A wrapped version of this session in the form of a [[SQLContext]], for backward compatibility.
+    *
+    * 这个会话的包装版本以SQLContext的形式，用于向后兼容。
    *
    * @since 2.0.0
    */
@@ -154,11 +157,14 @@ class SparkSession private(
   val sqlContext: SQLContext = new SQLContext(this)
 
   /**
-   * Runtime configuration interface for Spark.
+   * Runtime configuration interface for Spark. 用于Spark的运行时配置接口。
    *
    * This is the interface through which the user can get and set all Spark and Hadoop
    * configurations that are relevant to Spark SQL. When getting the value of a config,
    * this defaults to the value set in the underlying `SparkContext`, if any.
+    *
+    * 这是用户可以获得并设置与Spark SQL相关的所有Spark和Hadoop配置的接口。在获取配置的值时，
+    * 默认值设置为底层“SparkContext”中的值(如果有的话)。
    *
    * @since 2.0.0
    */
@@ -168,6 +174,8 @@ class SparkSession private(
    * :: Experimental ::
    * An interface to register custom [[org.apache.spark.sql.util.QueryExecutionListener]]s
    * that listen for execution metrics.
+    *
+    * 一个用于注册自定义的接口org.apache.spark.sql.util.QueryExecutionListener。用于侦听执行度量的侦听器。
    *
    * @since 2.0.0
    */
@@ -179,6 +187,8 @@ class SparkSession private(
    * :: Experimental ::
    * A collection of methods that are considered experimental, but can be used to hook into
    * the query planner for advanced functionality.
+    *
+    * 一组被认为是实验性的方法，但是可以用来连接到高级功能的查询规划器。
    *
    * @since 2.0.0
    */
@@ -213,6 +223,8 @@ class SparkSession private(
    * :: Experimental ::
    * Returns a `StreamingQueryManager` that allows managing all the
    * `StreamingQuery`s active on `this`.
+    *
+    * 返回一个“StreamingQueryManager”，它允许管理所有“StreamingQuery”在“this”上的活动。
    *
    * @since 2.0.0
    */
@@ -223,11 +235,16 @@ class SparkSession private(
   /**
    * Start a new session with isolated SQL configurations, temporary tables, registered
    * functions are isolated, but sharing the underlying `SparkContext` and cached data.
+    *
+    * 使用隔离的SQL配置、临时表、已注册的函数启动新的会话，但共享底层的“SparkContext”和缓存数据。
    *
    * @note Other than the `SparkContext`, all shared state is initialized lazily.
    * This method will force the initialization of the shared state to ensure that parent
    * and child sessions are set up with the same shared state. If the underlying catalog
    * implementation is Hive, this will initialize the metastore, which may take some time.
+    *
+    * 除了“SparkContext”之外，所有共享状态都是惰性初始化的。此方法将强制共享状态的初始化，
+    * 以确保父进程和子会话都设置为相同的共享状态。如果底层目录实现是Hive，这将初始化转移，这可能需要一些时间。
    *
    * @since 2.0.0
    */
@@ -241,11 +258,18 @@ class SparkSession private(
    * registered functions) is copied over, and the cloned session is set up with the same shared
    * state as this session. The cloned session is independent of this session, that is, any
    * non-global change in either session is not reflected in the other.
+    *
+    * 创建一个相同的“SparkSession”副本，共享底层的“SparkContext”和共享状态。这个会话的所有状态(即SQL配置、
+    * 临时表、注册函数)都被复制，并且克隆的会话被设置为与这个会话相同的共享状态。克隆的会话与此会话无关，
+    * 也就是说，会话中的任何非全局更改都不会在另一个会话中反映出来。
    *
    * @note Other than the `SparkContext`, all shared state is initialized lazily.
    * This method will force the initialization of the shared state to ensure that parent
    * and child sessions are set up with the same shared state. If the underlying catalog
    * implementation is Hive, this will initialize the metastore, which may take some time.
+    *
+    * 除了“SparkContext”之外，所有共享状态都是惰性初始化的。此方法将强制共享状态的初始化，
+    * 以确保父进程和子会话都设置为相同的共享状态。如果底层目录实现是Hive，这将初始化转移，这可能需要一些时间。
    */
   private[sql] def cloneSession(): SparkSession = {
     val result = new SparkSession(sparkContext, Some(sharedState), Some(sessionState), extensions)
@@ -260,6 +284,8 @@ class SparkSession private(
 
   /**
    * Returns a `DataFrame` with no rows or columns.
+    *
+    * 返回一个DataFrame没有rows和列
    *
    * @since 2.0.0
    */
@@ -284,6 +310,8 @@ class SparkSession private(
   /**
    * :: Experimental ::
    * Creates a `DataFrame` from an RDD of Product (e.g. case classes, tuples).
+    *
+    * 从Product中的RDD中创建一个“DataFrame”(例如，case类、元组)。
    *
    * @since 2.0.0
    */
@@ -400,8 +428,12 @@ class SparkSession private(
   /**
    * Applies a schema to an RDD of Java Beans.
    *
+    * 将模式应用于Java bean的RDD。
+    *
    * WARNING: Since there is no guaranteed ordering for fields in a Java Bean,
    * SELECT * queries will return the columns in an undefined order.
+    *
+    * 警告:由于在Java Bean中没有字段的保证排序，SELECT * 查询将以未定义的顺序返回列。
    *
    * @since 2.0.0
    */
@@ -411,6 +443,8 @@ class SparkSession private(
 
   /**
    * Applies a schema to a List of Java Beans.
+    *
+    * 将模式应用于Java bean的List。
    *
    * WARNING: Since there is no guaranteed ordering for fields in a Java Bean,
    *          SELECT * queries will return the columns in an undefined order.
@@ -424,6 +458,8 @@ class SparkSession private(
 
   /**
    * Convert a `BaseRelation` created for external data sources into a `DataFrame`.
+    *
+    * 将为外部数据源创建的“BaseRelation”转换为“DataFrame”。
    *
    * @since 2.0.0
    */
@@ -441,6 +477,10 @@ class SparkSession private(
    * encoder (to convert a JVM object of type `T` to and from the internal Spark SQL representation)
    * that is generally created automatically through implicits from a `SparkSession`, or can be
    * created explicitly by calling static methods on [[Encoders]].
+    *
+    * 从给定类型的本地数据Seq中创建[[Dataset]]。这个方法需要一个编码器(来转换类型“T”的JVM对象和内部
+    * Spark SQL表示)，它通常是通过“SparkSession”的implicits自动创建的，或者可以通过调用[[encoder]]
+    * 上的静态方法来显式创建。
    *
    * == Example ==
    *
@@ -496,6 +536,9 @@ class SparkSession private(
    * encoder (to convert a JVM object of type `T` to and from the internal Spark SQL representation)
    * that is generally created automatically through implicits from a `SparkSession`, or can be
    * created explicitly by calling static methods on [[Encoders]].
+    *
+    * 从给定类型的RDD中创建[[数据集]]。这个方法需要一个编码器(来转换类型“T”的JVM对象和内部Spark SQL表示)，
+    * 它通常是通过“SparkSession”的implicits自动创建的，或者可以通过调用[[encoder]]上的静态方法来显式创建。
    *
    * @since 2.0.0
    */
@@ -511,6 +554,9 @@ class SparkSession private(
    * encoder (to convert a JVM object of type `T` to and from the internal Spark SQL representation)
    * that is generally created automatically through implicits from a `SparkSession`, or can be
    * created explicitly by calling static methods on [[Encoders]].
+    *
+    * 从“java.util”中创建[[Dataset]]。给定类型的列表。这个方法需要一个编码器(来转换类型“T”的JVM对象和内部Spark SQL表示)，
+    * 它通常是通过“SparkSession”的implicits自动创建的，或者可以通过调用[[encoder]]上的静态方法来显式创建。
    *
    * == Java Example ==
    *
@@ -531,6 +577,8 @@ class SparkSession private(
    * :: Experimental ::
    * Creates a [[Dataset]] with a single `LongType` column named `id`, containing elements
    * in a range from 0 to `end` (exclusive) with step value 1.
+    *
+    * 使用一个名为“id”的单一“LongType”列创建一个[[Dataset]]，其中包含从0到“end”(独占)和步骤值1的范围内的元素。
    *
    * @since 2.0.0
    */
@@ -581,6 +629,8 @@ class SparkSession private(
   /**
    * Creates a `DataFrame` from an RDD[Row].
    * User can specify whether the input rows should be converted to Catalyst rows.
+    *
+    * 从RDD中创建“DataFrame”。用户可以指定输入行是否应该转换为Catalyst行。
    */
   private[sql] def internalCreateDataFrame(
       catalystRows: RDD[InternalRow],
@@ -671,6 +721,9 @@ class SparkSession private(
   /**
    * Returns a [[DataFrameReader]] that can be used to read non-streaming data in as a
    * `DataFrame`.
+    *
+    * 返回一个[[DataFrameReader]]，可用于将非流数据以“DataFrame”的形式读取。
+    *
    * {{{
    *   sparkSession.read.parquet("/path/to/file.parquet")
    *   sparkSession.read.schema(schema).json("/path/to/file.json")
@@ -682,6 +735,9 @@ class SparkSession private(
 
   /**
    * Returns a `DataStreamReader` that can be used to read streaming data in as a `DataFrame`.
+    *
+    * 返回一个“DataStreamReader”，可用于将流数据作为“DataFrame”读取。
+    *
    * {{{
    *   sparkSession.readStream.parquet("/path/to/directory/of/parquet/files")
    *   sparkSession.readStream.schema(schema).json("/path/to/directory/of/json/files")
@@ -695,6 +751,8 @@ class SparkSession private(
   /**
    * Executes some code block and prints to stdout the time taken to execute the block. This is
    * available in Scala only and is used primarily for interactive testing and debugging.
+    *
+    * 执行一些代码块和打印输出以执行该块执行的时间。这仅在Scala中可用，主要用于交互式测试和调试。
    *
    * @since 2.1.0
    */
@@ -730,7 +788,7 @@ class SparkSession private(
   // scalastyle:on
 
   /**
-   * Stop the underlying `SparkContext`.
+   * Stop the underlying `SparkContext`. 阻止潜在的“SparkContext”。
    *
    * @since 2.0.0
    */
@@ -739,7 +797,7 @@ class SparkSession private(
   }
 
   /**
-   * Synonym for `stop()`.
+   * Synonym for `stop()`. 同义词“stop()”。
    *
    * @since 2.1.0
    */
@@ -749,6 +807,8 @@ class SparkSession private(
    * Parses the data type in our internal string representation. The data type string should
    * have the same format as the one generated by `toString` in scala.
    * It is only used by PySpark.
+    *
+    * 解析内部字符串表示中的数据类型。数据类型字符串应该具有与scala“toString”生成的格式相同的格式。它只被PySpark使用。
    */
   protected[sql] def parseDataType(dataTypeString: String): DataType = {
     DataType.fromJson(dataTypeString)
@@ -756,6 +816,7 @@ class SparkSession private(
 
   /**
    * Apply a schema defined by the schemaString to an RDD. It is only used by PySpark.
+    * 应用由schemaString到RDD定义的模式。它只被PySpark使用。
    */
   private[sql] def applySchemaToPythonRDD(
       rdd: RDD[Array[Any]],
@@ -766,6 +827,7 @@ class SparkSession private(
 
   /**
    * Apply a schema defined by the schema to an RDD. It is only used by PySpark.
+    * 将模式定义的模式应用于RDD。它只被PySpark使用。
    */
   private[sql] def applySchemaToPythonRDD(
       rdd: RDD[Array[Any]],
@@ -776,6 +838,7 @@ class SparkSession private(
 
   /**
    * Returns a Catalyst Schema for the given java bean class.
+    * 为给定的java bean类返回一个Catalyst模式。
    */
   private def getSchema(beanClass: Class[_]): Seq[AttributeReference] = {
     val (dataType, _) = JavaTypeInference.inferDataType(beanClass)
@@ -899,6 +962,8 @@ object SparkSession {
     /**
      * Inject extensions into the [[SparkSession]]. This allows a user to add Analyzer rules,
      * Optimizer rules, Planning Strategies or a customized parser.
+      *
+      * 将扩展注入[[SparkSession]]。这允许用户添加分析器规则、优化器规则、规划策略或定制的解析器。
      *
      * @since 2.2.0
      */
@@ -1033,6 +1098,9 @@ object SparkSession {
    * SparkSession.getOrCreate() is called. This can be used to ensure that a given thread receives
    * a SparkSession with an isolated session, instead of the global (first created) context.
    *
+    * 当调用SparkSession. getorcreate()时，将在该线程和其子元素中返回的SparkSession更改。
+    * 这可以用来确保给定的线程通过一个单独的会话来接收SparkSession，而不是全局(第一个创建的)上下文。
+    *
    * @since 2.0.0
    */
   def setActiveSession(session: SparkSession): Unit = {
@@ -1042,6 +1110,8 @@ object SparkSession {
   /**
    * Clears the active SparkSession for current thread. Subsequent calls to getOrCreate will
    * return the first created context instead of a thread-local override.
+    *
+    * 为当前线程清除活动的SparkSession。随后对getOrCreate的调用将返回第一个创建的上下文，而不是线程本地覆盖。
    *
    * @since 2.0.0
    */
@@ -1061,6 +1131,7 @@ object SparkSession {
 
   /**
    * Clears the default SparkSession that is returned by the builder.
+    * 清除生成器返回的默认SparkSession。
    *
    * @since 2.0.0
    */
@@ -1070,6 +1141,8 @@ object SparkSession {
 
   /**
    * Returns the active SparkSession for the current thread, returned by the builder.
+    *
+    * 返回由构建器返回的当前线程的活动SparkSession。
    *
    * @since 2.2.0
    */
@@ -1091,6 +1164,13 @@ object SparkSession {
 
   /** The active SparkSession for the current thread.
     * 当前线程的活动SparkSession。
+    *
+    * InheritableThreadLocal类继承于ThreadLocal类，所以它具有ThreadLocal类的特性，
+    * 但又是一种特殊的ThreadLocal，其特殊性在于InheritableThreadLocal变量值会自动传递给所有子线程，
+    * 而普通ThreadLocal变量不行。
+    *
+    * InheritableThreadLocal比ThreadLocal多一个特性，继承性，可以从父线程中得到初始值。
+    *
     * */
   private val activeThreadSession = new InheritableThreadLocal[SparkSession]
 

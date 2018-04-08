@@ -44,6 +44,7 @@ object Row {
 
   /**
    * This method can be used to construct a [[Row]] with the given values.
+    * 该方法可用于构造带给定值的行。
    */
   def apply(values: Any*): Row = new GenericRow(values.toArray)
 
@@ -56,13 +57,15 @@ object Row {
 
   /**
    * Merge multiple rows into a single row, one after another.
+    * 将多个行合并成一行，一个接一个。
    */
   def merge(rows: Row*): Row = {
     // TODO: Improve the performance of this if used in performance critical part.
+    // 提高性能，如果使用在性能关键部分。
     new GenericRow(rows.flatMap(_.toSeq).toArray)
   }
 
-  /** Returns an empty row. */
+  /** Returns an empty row. 返回一个空行*/
   val empty = apply()
 }
 
@@ -71,10 +74,15 @@ object Row {
  * Represents one row of output from a relational operator.  Allows both generic access by ordinal,
  * which will incur boxing overhead for primitives, as well as native primitive access.
  *
+  * 表示关系运算符的一行输出。允许通过序数进行通用访问，这将为原语和原生原语访问带来了拳击开销。
+  *
  * It is invalid to use the native primitive interface to retrieve a value that is null, instead a
  * user must check `isNullAt` before attempting to retrieve a value that might be null.
+  *
+  * 使用本机原始接口来检索null值是无效的，相反，用户在尝试检索可能为null的值之前必须检查“isNullAt”。
  *
  * To create a new Row, use `RowFactory.create()` in Java or `Row.apply()` in Scala.
+  * 要创建新行，在Java请使用“RowFactory.create()”，或在Scala中使用“Row.apply()”。
  *
  * A [[Row]] object can be constructed by providing field values. Example:
  * {{{
@@ -89,6 +97,9 @@ object Row {
  * A value of a row can be accessed through both generic access by ordinal,
  * which will incur boxing overhead for primitives, as well as native primitive access.
  * An example of generic access by ordinal:
+  *
+  * 通过序号的通用访问，可以访问一行的值，这将为原语和原生原语访问带来一些开销。序数的通用访问示例:
+  *
  * {{{
  * import org.apache.spark.sql._
  *
@@ -103,6 +114,9 @@ object Row {
  * For native primitive access, it is invalid to use the native primitive interface to retrieve
  * a value that is null, instead a user must check `isNullAt` before attempting to retrieve a
  * value that might be null.
+  *
+  * 对于本机原语访问，使用本机原始接口来检索null值是无效的，相反，用户在尝试检索可能为null的值之前必须检查“isNullAt”。
+  *
  * An example of native primitive access:
  * {{{
  * // using the row from the previous example.
@@ -126,20 +140,22 @@ object Row {
  */
 @InterfaceStability.Stable
 trait Row extends Serializable {
-  /** Number of elements in the Row. */
+  /** Number of elements in the Row. 行中的元素个数。 */
   def size: Int = length
 
-  /** Number of elements in the Row. */
+  /** Number of elements in the Row. 行中的元素个数。 */
   def length: Int
 
   /**
-   * Schema for the row.
+   * Schema for the row. 行的模式
    */
   def schema: StructType = null
 
   /**
    * Returns the value at position i. If the value is null, null is returned. The following
    * is a mapping between Spark SQL types and return types:
+    *
+    * 返回位置i的值。如果该值为null，则返回null。下面是Spark SQL类型和返回类型之间的映射:
    *
    * {{{
    *   BooleanType -> java.lang.Boolean
@@ -165,6 +181,8 @@ trait Row extends Serializable {
   /**
    * Returns the value at position i. If the value is null, null is returned. The following
    * is a mapping between Spark SQL types and return types:
+    *
+    * 返回位置i的值。如果该值为null，则返回null。下面是Spark SQL类型和返回类型之间的映射:
    *
    * {{{
    *   BooleanType -> java.lang.Boolean
@@ -187,11 +205,12 @@ trait Row extends Serializable {
    */
   def get(i: Int): Any
 
-  /** Checks whether the value at position i is null. */
+  /** Checks whether the value at position i is null. 检查位置i的数据是否为空 */
   def isNullAt(i: Int): Boolean = get(i) == null
 
   /**
    * Returns the value at position i as a primitive boolean.
+    * 返回位置i作为原始布尔值的值。
    *
    * @throws ClassCastException when data type does not match.
    * @throws NullPointerException when value is null.
@@ -200,6 +219,7 @@ trait Row extends Serializable {
 
   /**
    * Returns the value at position i as a primitive byte.
+    * 返回位置i作为原始字节的值。
    *
    * @throws ClassCastException when data type does not match.
    * @throws NullPointerException when value is null.

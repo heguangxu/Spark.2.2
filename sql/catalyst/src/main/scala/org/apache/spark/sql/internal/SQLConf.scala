@@ -1078,7 +1078,9 @@ class SQLConf extends Serializable with Logging {
     props.asScala.foreach { case (k, v) => setConfString(k, v) }
   }
 
-  /** Set the given Spark SQL configuration property using a `string` value. */
+  /** Set the given Spark SQL configuration property using a `string` value.
+    * 使用“string”值设置给定的Spark SQL配置属性。
+    * */
   def setConfString(key: String, value: String): Unit = {
     require(key != null, "key cannot be null")
     require(value != null, s"value cannot be null for key: $key")

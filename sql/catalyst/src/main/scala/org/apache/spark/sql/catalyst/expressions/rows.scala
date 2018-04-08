@@ -161,9 +161,11 @@ trait BaseGenericInternalRow extends InternalRow {
  * A row implementation that uses an array of objects as the underlying storage.  Note that, while
  * the array is not copied, and thus could technically be mutated after creation, this is not
  * allowed.
+  *
+  * 使用对象数组作为底层存储的行实现。注意，虽然数组不是复制的，因此在创建之后可能会发生突变，但这是不允许的。
  */
 class GenericRow(protected[sql] val values: Array[Any]) extends Row {
-  /** No-arg constructor for serialization. */
+  /** No-arg constructor for serialization. 为序列化的无参数构造函数 */
   protected def this() = this(null)
 
   def this(size: Int) = this(new Array[Any](size))
@@ -180,7 +182,7 @@ class GenericRow(protected[sql] val values: Array[Any]) extends Row {
 class GenericRowWithSchema(values: Array[Any], override val schema: StructType)
   extends GenericRow(values) {
 
-  /** No-arg constructor for serialization. */
+  /** No-arg constructor for serialization.  为序列化的无参数构造函数 */
   protected def this() = this(null, null)
 
   override def fieldIndex(name: String): Int = schema.fieldIndex(name)

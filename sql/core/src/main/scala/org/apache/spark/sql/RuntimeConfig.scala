@@ -26,6 +26,8 @@ import org.apache.spark.sql.internal.SQLConf
  * Runtime configuration interface for Spark. To access this, use `SparkSession.conf`.
  *
  * Options set here are automatically propagated to the Hadoop configuration during I/O.
+  *
+  * 用于Spark的运行时配置接口。要访问这个，请使用“SparkSession.conf”。这里设置的选项在I/O期间自动传播到Hadoop配置。
  *
  * @since 2.0.0
  */
@@ -34,6 +36,7 @@ class RuntimeConfig private[sql](sqlConf: SQLConf = new SQLConf) {
 
   /**
    * Sets the given Spark runtime configuration property.
+    * 设置给定的Spark运行时配置属性。
    *
    * @since 2.0.0
    */
@@ -124,6 +127,7 @@ class RuntimeConfig private[sql](sqlConf: SQLConf = new SQLConf) {
 
   /**
    * Resets the configuration property for the given key.
+    * 重置给定键的配置属性。
    *
    * @since 2.0.0
    */
@@ -139,6 +143,10 @@ class RuntimeConfig private[sql](sqlConf: SQLConf = new SQLConf) {
     sqlConf.contains(key)
   }
 
+  /**
+    * 判断SQLConf中的配置key是否是静态的，如果是静态的就说明数据不能修改，抛出异常
+    * @param key
+    */
   private def requireNonStaticConf(key: String): Unit = {
     if (SQLConf.staticConfKeys.contains(key)) {
       throw new AnalysisException(s"Cannot modify the value of a static config: $key")
