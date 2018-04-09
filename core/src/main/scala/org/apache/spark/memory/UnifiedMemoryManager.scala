@@ -337,10 +337,12 @@ object UnifiedMemoryManager {
    */
   private def getMaxMemory(conf: SparkConf): Long = {
     // 获取系统可用最大内存systemMemory，取参数spark.testing.memory，未配置的话取运行时环境中的最大内存
+    // //< 生产环境中一般不会设置 spark.testing.memory，所以这里认为 systemMemory 大小为 Jvm 最大可用内存
     val systemMemory = conf.getLong("spark.testing.memory", Runtime.getRuntime.maxMemory)
 
     // 获取预留内存reservedMemory，取参数spark.testing.reservedMemory，
     // 未配置的话，根据参数spark.testing来确定默认值，参数spark.testing存在的话，默认为0，否则默认为300M
+    //< 系统预留 300M
     val reservedMemory = conf.getLong("spark.testing.reservedMemory",
       if (conf.contains("spark.testing")) 0 else RESERVED_SYSTEM_MEMORY_BYTES)
 
@@ -349,6 +351,7 @@ object UnifiedMemoryManager {
 
     // 如果系统可用最大内存systemMemory小于最小的系统内存minSystemMemory，即预留内存reservedMemory的1.5倍的话，
     // 抛出异常 提醒用户调大JVM堆大小
+    //< 如果 systemMemory 小于450M，则抛异常
     if (systemMemory < minSystemMemory) {
       throw new IllegalArgumentException(s"System memory $systemMemory must " +
         s"be at least $minSystemMemory. Please increase heap size using the --driver-memory " +
@@ -372,6 +375,7 @@ object UnifiedMemoryManager {
     val memoryFraction = conf.getDouble("spark.memory.fraction", 0.6)
 
     // 返回的execution和storage区域共享的最大内存为usableMemory * memoryFraction
+    //< 最终 execution 和 storage 的可用内存之和为 (JVM最大可用内存 - 系统预留内存) * spark.memory.fraction
     (usableMemory * memoryFraction).toLong
   }
 }

@@ -590,6 +590,8 @@ class SparkConf(loadDefaults: Boolean) extends Cloneable with Logging with Seria
 
     // Warn against deprecated memory fractions (unless legacy memory management mode is enabled)
     // 反对过时的memory 分数（除非传统的内存管理模式已启用）
+    // 在Spark-1.6.0中，引入了一个新的参数spark.memory.userLegacyMode（默认值为false），
+    // 表示不使用Spark-1.6.0之前的内存管理机制，而是使用1.6.0中引入的动态内存分配这一概念。
     val legacyMemoryManagementKey = "spark.memory.useLegacyMode"
     val legacyMemoryManagement = getBoolean(legacyMemoryManagementKey, false)
     if (!legacyMemoryManagement) {
@@ -768,6 +770,10 @@ private[spark] object SparkConf extends Logging {
       */
     "spark.yarn.max.executor.failures" -> Seq(
       AlternateConfig("spark.yarn.max.worker.failures", "1.5")),
+
+    /**
+      * 根据spark.memory.offHeap.enabled参数（默认为false）来决定是ON_HEAP还是OFF_HEAP
+      */
     "spark.memory.offHeap.enabled" -> Seq(
       AlternateConfig("spark.unsafe.offHeap", "1.6")),
     "spark.rpc.message.maxSize" -> Seq(

@@ -24,8 +24,10 @@ import org.apache.spark.unsafe.memory.MemoryBlock;
 
 /**
  * A memory consumer of {@link TaskMemoryManager} that supports spilling.
+ * 支持溢出的{@link TaskMemoryManager}的内存使用者。
  *
  * Note: this only supports allocation / spilling of Tungsten memory.
+ * 注意：这只支持分配/溢出钨内存。
  */
 public abstract class MemoryConsumer {
 
@@ -46,6 +48,7 @@ public abstract class MemoryConsumer {
 
   /**
    * Returns the memory mode, {@link MemoryMode#ON_HEAP} or {@link MemoryMode#OFF_HEAP}.
+   * 返回内存模式，{@link MemoryMode#ON_HEAP}或{@link MemoryMode#OFF_HEAP}。
    */
   public MemoryMode getMode() {
     return mode;
@@ -53,6 +56,7 @@ public abstract class MemoryConsumer {
 
   /**
    * Returns the size of used memory in bytes.
+   * 返回以字节为单位的使用内存的大小。
    */
   protected long getUsed() {
     return used;
@@ -60,6 +64,7 @@ public abstract class MemoryConsumer {
 
   /**
    * Force spill during building.
+   * 在building期间强制spill。
    */
   public void spill() throws IOException {
     spill(Long.MAX_VALUE, this);
@@ -69,11 +74,15 @@ public abstract class MemoryConsumer {
    * Spill some data to disk to release memory, which will be called by TaskMemoryManager
    * when there is not enough memory for the task.
    *
-   * This should be implemented by subclass.
+   * 将一些数据泄漏到磁盘以释放内存，当任务没有足够的内存时，TaskMemoryManager将调用它。
+   *
+   * This should be implemented by subclass.  这应该由子类来实现。
    *
    * Note: In order to avoid possible deadlock, should not call acquireMemory() from spill().
+   * 注意:为了避免可能的死锁，不应调用泄漏()。
    *
    * Note: today, this only frees Tungsten-managed pages.
+   * 注意:今天，这只释放了钨丝管理的页面。
    *
    * @param size the amount of memory should be released
    * @param trigger the MemoryConsumer that trigger this spilling
@@ -83,7 +92,7 @@ public abstract class MemoryConsumer {
   public abstract long spill(long size, MemoryConsumer trigger) throws IOException;
 
   /**
-   * Allocates a LongArray of `size`.
+   * Allocates a LongArray of `size`. 分配一个“大小”的长数组。
    */
   public LongArray allocateArray(long size) {
     long required = size * 8L;
@@ -102,16 +111,16 @@ public abstract class MemoryConsumer {
   }
 
   /**
-   * Frees a LongArray.
+   * Frees a LongArray. 释放一个LongArray。
    */
   public void freeArray(LongArray array) {
     freePage(array.memoryBlock());
   }
 
   /**
-   * Allocate a memory block with at least `required` bytes.
+   * Allocate a memory block with at least `required` bytes. 用至少需要的字节来分配内存块。
    *
-   * Throws IOException if there is not enough memory.
+   * Throws IOException if there is not enough memory.  如果没有足够的内存，就会抛出IOException。
    *
    * @throws OutOfMemoryError
    */
@@ -131,7 +140,7 @@ public abstract class MemoryConsumer {
   }
 
   /**
-   * Free a memory block.
+   * Free a memory block. 释放的一个内存块。
    */
   protected void freePage(MemoryBlock page) {
     used -= page.size();
@@ -139,7 +148,7 @@ public abstract class MemoryConsumer {
   }
 
   /**
-   * Allocates memory of `size`.
+   * Allocates memory of `size`.  分配内存的大小。
    */
   public long acquireMemory(long size) {
     long granted = taskMemoryManager.acquireExecutionMemory(size, this);
@@ -148,7 +157,7 @@ public abstract class MemoryConsumer {
   }
 
   /**
-   * Release N bytes of memory.
+   * Release N bytes of memory.  释放N个字节的内存。
    */
   public void freeMemory(long size) {
     taskMemoryManager.releaseExecutionMemory(size, this);

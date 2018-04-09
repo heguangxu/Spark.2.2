@@ -190,6 +190,9 @@ private[spark] object StaticMemoryManager {
    */
   private def getMaxExecutionMemory(conf: SparkConf): Long = {
     // 系统可用最大内存，取参数spark.testing.memory，未配置的话取运行时环境中的最大内存
+    // 若设置了 spark.testing.memory 则以该配置的值作为 systemMaxMemory，否则使用 JVM 最大内存作为
+    // systemMaxMemory。spark.testing.memory 仅用于测试，一般不设置，所以这里我们认为 systemMaxMemory
+    // 的值就是 executor 的最大可用内存。
     val systemMaxMemory = conf.getLong("spark.testing.memory", Runtime.getRuntime.maxMemory)
 
     if (systemMaxMemory < MIN_MEMORY_BYTES) {
@@ -209,11 +212,23 @@ private[spark] object StaticMemoryManager {
     /**
       * 取Execution区域（即运行区域，为shuffle使用）在总内存中所占比重，由参数spark.shuffle.memoryFraction确定，默认为0.2
       *
-      * spark.shuffle.memoryFraction
+      * 优化：
+      *   spark.shuffle.memoryFraction
+      *
+      *   shuffle期间用于aggregation和cogroups的内存占executor运行的百分比，用小数表示。在任何时候，用于shuffle的
+      *   内存总size不得超过这个限制，超出的部分会被spill到磁盘.如果经常spill，考虑调大spark.shuffle.memoryFraction.
       *
       * 默认值：0.2参数说明：该参数代表了Executor内存中，分配给shuffle read task进行聚合操作的内存比例，默认是20%。
       * 调优建议：在资源参数调优中讲解过这个参数。如果内存充足，而且很少使用持久化操作，建议调高这个比例，给shuffle read
       * 的聚合操作更多内存，以避免由于内存不足导致聚合过程中频繁读写磁盘。在实践中发现，合理调节该参数可以将性能提升10%左右。
+      *
+      * spark.shuffle.safetyFraction：为防止 OOM，不能把 systemMaxMemory * spark.shuffle.memoryFraction 全用了，
+      * 需要有个安全百分比
+      *
+      * 所以最终用于 execution 的内存量为：executor 最大可用内存 * spark.shuffle.memoryFraction * spark.shuffle.safetyFraction，
+      * 默认为 executor 最大可用内存 * 0.16
+      *
+      * 需要特别注意的是，即使用于 execution 的内存不够用了，但同时 executor 还有其他空余内存，也不能给 execution 用
       */
     val memoryFraction = conf.getDouble("spark.shuffle.memoryFraction", 0.2)
 

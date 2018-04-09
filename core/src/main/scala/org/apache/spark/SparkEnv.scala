@@ -422,6 +422,7 @@ object SparkEnv extends Logging {
     val memoryManager: MemoryManager =
       if (useLegacyMemoryManager) {
         // 如果还是采用之前的方式，则使用StaticMemoryManager内存管理模型，即静态内存管理
+        // 配套博客：https://blog.csdn.net/qq_21383435/article/details/78641586
         new StaticMemoryManager(conf, numUsableCores)
       } else {
         // 否则，使用最新的UnifiedMemoryManager内存管理模型，即统一内存管理模型

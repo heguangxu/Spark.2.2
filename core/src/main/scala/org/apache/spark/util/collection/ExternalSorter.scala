@@ -89,7 +89,7 @@ import org.apache.spark.storage.{BlockId, DiskBlockObjectWriter}
  *    To avoid calling the partitioner multiple times with each key, we store the partition ID
  *    alongside each record.
   *
-  *   我们重复地填充内存中的数据缓冲区，如果我们想要按键合并，或者不使用分区的pairbuffer，就使用
+  *   我们重复地填充内存中的数据缓冲区，如果我们想要按key合并，或者不使用分区的pairbuffer，就使用
   *   PartitionedAppendOnlyMap。在这些缓冲区中，我们通过分区ID对元素进行排序，然后可能也按键进行排序。
   *   为了避免在每个键上多次调用partitioner，我们在每个记录旁边存储分区ID。
  *
@@ -98,8 +98,9 @@ import org.apache.spark.storage.{BlockId, DiskBlockObjectWriter}
  *    aggregation. For each file, we track how many objects were in each partition in memory, so we
  *    don't have to write out the partition ID for every element.
   *
-  *    当每个缓冲区达到我们的内存限制时，我们将它泄漏到一个文件中。如果我们想要进行聚合，这个文件首先是按分区ID排序的，
-  *    可能是按键或键的哈希代码来排序的。对于每个文件，我们跟踪内存中每个分区中有多少个对象，因此我们不必为每个元素写出分区ID。
+  *    当每个缓冲区达到我们的内存限制时，我们将它溢写到一个文件中。如果我们想要进行聚合，这个文件首先是按分区ID排序的，
+  *    然后第二步按key排序或者按key的哈希代码来排序的。对于每个文件，我们跟踪内存中每个分区中有多少个对象，因此我们
+  *    不必为每个元素写出分区ID。
   *
  *
  *  - When the user requests an iterator or file output, the spilled files are merged, along with
@@ -109,7 +110,8 @@ import org.apache.spark.storage.{BlockId, DiskBlockObjectWriter}
  *    each other for equality to merge values.
   *
   *    当用户请求迭代器或文件输出时，溢出的文件将被合并，并与其他内存中的数据一起使用相同的排序顺序(除非禁用了排序和聚合)。
-  *    如果我们需要通过键聚合，我们可以使用排序参数的总排序，或者使用相同的散列代码读取键，并将它们与其他的键进行比较，以实现合并值。
+  *    如果我们需要通过key聚合，我们可以使用排序参数的总排序，或者使用相同的散列代码读取键，并将它们与其他的键进行比较，
+  *    以实现合并值。
  *
  *  - Users are expected to call stop() at the end to delete all the intermediate files.
   *
@@ -139,7 +141,7 @@ private[spark] class ExternalSorter[K, V, C](
 
 
   /**
-    * spark.shuffle.file.buffer
+    * 优化：spark.shuffle.file.buffer
     * 默认值：32k
     * 参数说明：该参数用于设置shuffle write task的BufferedOutputStream的buffer缓冲大小。将数据写到磁盘文件之前，
     * 会先写入buffer缓冲中，待缓冲写满之后，才会溢写到磁盘。
