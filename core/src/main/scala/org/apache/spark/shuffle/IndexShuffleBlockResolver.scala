@@ -34,13 +34,20 @@ import org.apache.spark.util.Utils
  * Create and maintain the shuffle blocks' mapping between logic block and physical file location.
  * Data of shuffle blocks from the same map task are stored in a single consolidated data file.
  * The offsets of the data blocks in the data file are stored in a separate index file.
+  *
+  * 在逻辑块和物理文件位置之间创建并维护shuffle块的映射。从相同的映射任务中移动的数据块存储在
+  * 一个统一的数据文件中。数据文件中的数据块的偏移量存储在一个单独的索引文件中。
  *
  * We use the name of the shuffle data's shuffleBlockId with reduce ID set to 0 and add ".data"
  * as the filename postfix for data file, and ".index" as the filename postfix for index file.
+  *
+  * 我们使用shuffle数据的shuffleBlockId的名称将ID设置为0并添加“.data“作为数据文件的文件名后缀,而且
+  *".index" 作为索引文件的文件名后缀。
  *
  */
 // Note: Changes to the format in this file should be kept in sync with
 // org.apache.spark.network.shuffle.ExternalShuffleBlockResolver#getSortBasedShuffleBlockData().
+// 注意:该文件中格式的更改应该与org.apache.spark.network.shuffle.ExternalShuffleBlockResolver#getSortBasedShuffleBlockData()保持同步。
 private[spark] class IndexShuffleBlockResolver(
     conf: SparkConf,
     _blockManager: BlockManager = null)
@@ -61,6 +68,8 @@ private[spark] class IndexShuffleBlockResolver(
 
   /**
    * Remove data file and index file that contain the output data from one map.
+    *
+    * 从一个映射中删除包含输出数据的数据文件和索引文件。
    */
   def removeDataByMap(shuffleId: Int, mapId: Int): Unit = {
     var file = getDataFile(shuffleId, mapId)
@@ -81,6 +90,8 @@ private[spark] class IndexShuffleBlockResolver(
   /**
    * Check whether the given index and data files match each other.
    * If so, return the partition lengths in the data file. Otherwise return null.
+    *
+    * 检查给定的索引和数据文件是否匹配。如果是，则返回数据文件中的分区长度。否则返回null。
    */
   private def checkIndexAndDataFile(index: File, data: File, blocks: Int): Array[Long] = {
     // the index file should have `block + 1` longs as offset.
@@ -127,11 +138,17 @@ private[spark] class IndexShuffleBlockResolver(
    * Write an index file with the offsets of each block, plus a final offset at the end for the
    * end of the output file. This will be used by getBlockData to figure out where each block
    * begins and ends.
+    *
+    * 用每个块的偏移量写一个索引文件，并在输出文件末尾加上最后的偏移量。这将被getBlockData用于计算每个块开始和结束的位置。
    *
    * It will commit the data and index file as an atomic operation, use the existing ones, or
    * replace them with new ones.
+    *
+    * 它将把数据和索引文件作为一个原子操作提交，使用现有的文件，或者用新的文件替换它们。
    *
    * Note: the `lengths` will be updated to match the existing index file if use the existing ones.
+    *
+    * 注意:如果使用现有索引文件，将更新“长度”以匹配现有索引文件。
    */
   def writeIndexFileAndCommit(
       shuffleId: Int,

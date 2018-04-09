@@ -70,6 +70,8 @@ private[spark] object ShutdownHookManager extends Logging {
     logInfo("Shutdown hook called")
     // we need to materialize the paths to delete because deleteRecursively removes items from
     // shutdownDeletePaths as we are traversing through it.
+    //
+    // 我们需要实现删除路径，因为我们在遍历过程中从shutdowndeletepath中删除项目。
     shutdownDeletePaths.toArray.foreach { dirPath =>
       try {
         logInfo("Deleting directory " + dirPath)

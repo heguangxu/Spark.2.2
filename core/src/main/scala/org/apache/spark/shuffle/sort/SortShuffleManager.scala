@@ -99,6 +99,7 @@ private[spark] class SortShuffleManager(conf: SparkConf) extends ShuffleManager 
     *   如果为true，在shuffle期间通过溢出数据到磁盘来降低内存使用总量，溢出阈值是由spark.shuffle.memoryFraction指定的。
     */
   if (!conf.getBoolean("spark.shuffle.spill", true)) {
+    // spark.shuffle.spill 被设置为false，但是这个配置被1.6版本忽略，因为Spark 1.6 Shuffle将在必要时继续泄漏到磁盘。
     logWarning(
       "spark.shuffle.spill was set to false, but this configuration is ignored as of Spark 1.6+." +
         " Shuffle will continue to spill to disk when necessary.")

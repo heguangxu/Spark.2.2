@@ -1950,6 +1950,7 @@ private[spark] object Utils extends Logging {
   // Handles idiosyncrasies with hash (add more as required)
   // This method should be kept in sync with
   // org.apache.spark.network.util.JavaUtils#nonNegativeHash().
+  // 使用散列处理特性(添加更多)，该方法应该与org.apache.spark.network.util.JavaUtils#nonNegativeHash()保持同步。
   def nonNegativeHash(obj: AnyRef): Int = {
 
     // Required ?
