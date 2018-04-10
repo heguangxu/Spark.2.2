@@ -630,6 +630,13 @@ class JavaPairRDD[K, V](val rdd: RDD[(K, V)])
    * also perform the merging locally on each mapper before sending results to a reducer, similarly
    * to a "combiner" in MapReduce. Output will be hash-partitioned with the existing partitioner/
    * parallelism level.
+    *
+    * 使用关联和可交换的reduce函数合并每个键的值。这也将在将结果发送到减速器之前在每个mapper上执行本地合并，
+    * 类似于MapReduce中的“组合器combiner”。输出将使用现有的分区/并行级别进行哈希分区。
+    *
+    * 优化：
+    * 尽可能的使用reduceByKey而不使用GroupByKey
+    * 参考博客：https://blog.csdn.net/qq_21383435/article/details/79883360
    */
   def reduceByKey(func: JFunction2[V, V, V]): JavaPairRDD[K, V] = {
     fromRDD(reduceByKey(defaultPartitioner(rdd), func))

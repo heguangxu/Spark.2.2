@@ -670,9 +670,19 @@ class PairRDDFunctions[K, V](self: RDD[(K, V)])
     * within each group is not guaranteed, and may even differ each time the resulting RDD is
     * evaluated.
     *
+    * 将RDD中的每个键的值分组为一个序列。将产生的RDD与现有的分区/并行级别划分。每个组中元素的顺序是不确定的，
+    * 并且每次评估结果的RDD可能会不同。
+    *
     * @note This operation may be very expensive. If you are grouping in order to perform an
     * aggregation (such as a sum or average) over each key, using `PairRDDFunctions.aggregateByKey`
     * or `PairRDDFunctions.reduceByKey` will provide much better performance.
+    *
+    * 这种手术可能非常昂贵。如果要对每个键执行聚合(比如求和或平均值)，则使用“PairRDDFunctions”。
+    * aggregateByKey’或‘PairRDDFunctions。还原键可以提供更好的性能。
+    *
+    * 优化：
+    * 尽可能的使用reduceByKey而不使用GroupByKey
+    * 参考博客：https://blog.csdn.net/qq_21383435/article/details/79883360
     */
   def groupByKey(): RDD[(K, Iterable[V])] = self.withScope {
     groupByKey(defaultPartitioner(self))

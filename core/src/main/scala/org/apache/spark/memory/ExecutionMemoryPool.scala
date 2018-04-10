@@ -148,7 +148,9 @@ private[memory] class ExecutionMemoryPool(
               3.7、计算我们可以赋予该Task的最大大小maxToGrant，取numBytes和（maxMemoryPerTask - curMem与0较大者）中的较小者，也就是，如果当前已耗费内存大于maxMemoryPerTask，则为0，不再分配啦，否则取还可以分配的内存和申请分配的内存中的较小者；
               3.8、计算实际可以分配的最大大小toGrant，取maxToGrant和memoryFree中的较小者；
               3.9、如果实际分配的内存大小toGrant小于申请分配的内存大小numBytes，且当前已耗费内存加上马上就要分配的内存，小于Task需要的最小内存，记录日志信息，lock等待，即MemoryManager等待；否则memoryForTask中对应Task的已耗费内存增加toGrant，返回申请的内存大小toGrant，跳出循环。
-   */
+    *
+    *  参考博客：https://blog.csdn.net/qq_21383435/article/details/79108106
+    */
   private[memory] def acquireMemory(
       numBytes: Long,
       taskAttemptId: Long,

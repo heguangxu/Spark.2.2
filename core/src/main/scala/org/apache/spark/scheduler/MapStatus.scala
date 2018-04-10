@@ -49,6 +49,14 @@ private[spark] sealed trait MapStatus {
 
 private[spark] object MapStatus {
 
+  /**
+    * 在 partition 小于 2000 和大于 2000 的两种场景下，Spark 使用不同的数据结构来在 shuffle 时记录相关信息，
+    * 在 partition 大于 2000 时，会有另一种更高效 [压缩] 的数据结构来存储信息。所以如果你的 partition 没到 2000，
+    * 但是很接近 2000，可以放心的把 partition 设置为 2000 以上。
+    * @param loc
+    * @param uncompressedSizes
+    * @return
+    */
   def apply(loc: BlockManagerId, uncompressedSizes: Array[Long]): MapStatus = {
     if (uncompressedSizes.length > 2000) {
       HighlyCompressedMapStatus(loc, uncompressedSizes)

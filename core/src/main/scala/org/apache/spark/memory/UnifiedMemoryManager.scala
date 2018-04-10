@@ -70,6 +70,8 @@ import org.apache.spark.storage.BlockId
   *
   *
   *  UnifiedMemoryManager代表的是统一的内存管理器，统一么，是不是有共享和变动的意思。
+  *
+  *  参考博客：https://blog.csdn.net/qq_21383435/article/details/79108106
  */
 private[spark] class UnifiedMemoryManager private[memory] (
     conf: SparkConf,
@@ -158,6 +160,17 @@ private[spark] class UnifiedMemoryManager private[memory] (
       *
       * 在为任务获取内存时，执行池可能需要多次尝试。每次尝试都必须能够驱逐存储，以防另一个任务跳跃，
       * 并在尝试之间缓存一个很大的块。这是每次尝试调用一次。
+      *
+      * 会释放storage中保存的数据，减小storage部分内存大小，从而增大Execution部分
+      *
+      * 首先，该方法何时被调用？
+      *     当execution pool的空闲内存不够用时，则该方法会被调用。从该方法的名字就可以得知，该方法试图增长execution pool的大小。
+      *
+      * 那么，如何增长execution pool呢？
+      *     通过阅读方法中的注释，我们可以看到有两种方式：
+      *         1. storage pool中有空闲内存，则借用storage pool中的空闲内存
+      *         2. storage pool的大小超过了storageRegionSize，则驱逐存储在storage pool中的blocks，
+      *             来回收storage pool从execution pool中借走的内存。
      */
     def maybeGrowExecutionPool(extraMemoryNeeded: Long): Unit = {
       if (extraMemoryNeeded > 0) {
@@ -165,11 +178,14 @@ private[spark] class UnifiedMemoryManager private[memory] (
         // storage. We can reclaim any free memory from the storage pool. If the storage pool
         // has grown to become larger than `storageRegionSize`, we can evict blocks and reclaim
         // the memory that storage has borrowed from execution.
+        //
+        // 在执行池中没有足够的空闲内存，所以尝试从存储中回收内存。我们可以从存储池中回收任何空闲内存。
+        // 如果存储池已经变得比“storageRegionSize”更大，那么我们就可以驱逐块并回收存储从执行中借用的内存。
         val memoryReclaimableFromStorage = math.max(
           storagePool.memoryFree,
           storagePool.poolSize - storageRegionSize)
         if (memoryReclaimableFromStorage > 0) {
-          // Only reclaim as much space as is necessary and available:
+          // Only reclaim as much space as is necessary and available: 只回收必要和可用的空间:
           val spaceToReclaim = storagePool.freeSpaceToShrinkPool(
             math.min(extraMemoryNeeded, memoryReclaimableFromStorage))
           storagePool.decrementPoolSize(spaceToReclaim)
@@ -197,6 +213,8 @@ private[spark] class UnifiedMemoryManager private[memory] (
       *
       * 此外，这个数量应该保持在“maxMemory”之下，在执行内存分配中对任务进行仲裁，否则，一个任务可能会占用更多
       * 的执行内存，错误地认为其他任务可以获得无法被驱逐的存储内存部分。
+      *
+      * 计算在 storage 释放内存借给 execution 后，execution 部分的内存大小
      */
     def computeMaxExecutionPoolSize(): Long = {
       maxMemory - math.min(storagePool.memoryUsed, storageRegionSize)
@@ -222,6 +240,8 @@ private[spark] class UnifiedMemoryManager private[memory] (
     * 借用的大小为此时execution的空闲内存和numBytes的较小值（个人观点应该是和(numBytes-storage空闲内存)的较小值）
     * 减小execution的poolSize
     * 增加storage的poolSize
+    *
+    * 参考博客：https://blog.csdn.net/qq_21383435/article/details/79108106
     * */
   override def acquireStorageMemory(
       blockId: BlockId,

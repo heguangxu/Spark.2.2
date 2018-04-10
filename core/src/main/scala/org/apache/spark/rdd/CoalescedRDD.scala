@@ -129,6 +129,9 @@ private[spark] class CoalescedRDD[T: ClassTag](
   /**
     * Returns the preferred machine for the partition. If split is of type CoalescedRDDPartition,
     * then the preferred machine will be one which most parent splits prefer too.
+    *
+    * 返回分区的首选机器。如果split是合并的类型，那么首选的机器将会是大多数父类拆分的首选。
+    *
     * @param partition
     * @return the machine most preferred by split
     */
@@ -141,6 +144,9 @@ private[spark] class CoalescedRDD[T: ClassTag](
   * Coalesce the partitions of a parent RDD (`prev`) into fewer partitions, so that each partition of
   * this RDD computes one or more of the parent ones. It will produce exactly `maxPartitions` if the
   * parent had more than maxPartitions, or fewer if the parent had fewer.
+  *
+  * 将父RDD (' prev ')的分区合并成更少的分区，以便该RDD的每个分区计算一个或多个父类的分区。如果父类拥有的超过max分区，
+  * 或者父类的数量更少，它将产生完全的“max分区”。
   *
   * This transformation is useful when an RDD with many partitions gets filtered into a smaller one,
   * or to avoid having a large number of small tasks when processing a directory with many files.
