@@ -1006,6 +1006,7 @@ class DAGScheduler(
 
   /**
    * Cancel all jobs that are running or waiting in the queue.
+    * 取消正在运行或在队列中等待的所有作业。
    */
   def cancelAllJobs(): Unit = {
     eventProcessLoop.post(AllJobsCancelled)

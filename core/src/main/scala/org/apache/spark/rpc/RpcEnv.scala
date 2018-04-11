@@ -177,6 +177,8 @@ private[spark] abstract class RpcEnv(conf: SparkConf) {
    * Open a channel to download a file from the given URI. If the URIs returned by the
    * RpcEnvFileServer use the "spark" scheme, this method will be called by the Utils class to
    * retrieve the files.
+    *
+    * 打开从给定URI下载文件的通道。如果由RpcEnvFileServer返回的uri使用“spark”方案，则Utils类将调用该方法来检索文件。
    *
    * @param uri URI with location of the file.
    */

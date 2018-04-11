@@ -27,8 +27,14 @@ private[repl] object Signaling extends Logging {
    * Register a SIGINT handler, that terminates all active spark jobs or terminates
    * when no jobs are currently running.
    * This makes it possible to interrupt a running shell job by pressing Ctrl+C.
+    *
+    * 注册一个SIGINT处理程序，在当前没有作业时终止所有活跃的spark作业或终止。
+    * 这使得通过按Ctrl+C来中断运行的shell任务成为可能。
+    *
+    * 当我们按下ctrl+c键的时候，会调用对应的信号处理程序，先获取活动的SparkContext，然后取消全部的job
    */
   def cancelOnInterrupt(): Unit = SignalUtils.register("INT") {
+    // 获取活动的SparkContext，并且遍历
     SparkContext.getActive.map { ctx =>
       if (!ctx.statusTracker.getActiveJobIds().isEmpty) {
         logWarning("Cancelling all active jobs, this can take a while. " +

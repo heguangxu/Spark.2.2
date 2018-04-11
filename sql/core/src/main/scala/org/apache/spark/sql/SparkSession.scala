@@ -926,6 +926,8 @@ object SparkSession {
     /**
      * Sets a list of config options based on the given `SparkConf`.
      *
+      * 根据给定的“SparkConf”设置一个配置选项列表。
+      *
      * @since 2.0.0
      */
     def config(conf: SparkConf): Builder = synchronized {
@@ -1209,7 +1211,7 @@ object SparkSession {
 
   /**
    * @return true if Hive classes can be loaded, otherwise false.
-    *         如果hive的类能够加载就返回真，否则返回false
+    *         如果hive的类能够加载就返回true，否则返回false
    */
   private[spark] def hiveClassesArePresent: Boolean = {
     try {

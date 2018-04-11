@@ -24,4 +24,5 @@ fi
 # disable randomized hash for string in Python 3.3+
 export PYTHONHASHSEED=0
 
+# 这里可以看到执行了spark-class脚本
 exec "${SPARK_HOME}"/bin/spark-class org.apache.spark.deploy.SparkSubmit "$@"

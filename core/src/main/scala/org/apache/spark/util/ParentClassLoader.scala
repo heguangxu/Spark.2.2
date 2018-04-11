@@ -19,6 +19,7 @@ package org.apache.spark.util
 
 /**
  * A class loader which makes some protected methods in ClassLoader accessible.
+  * 类装入器，在类加载器中使一些受保护的方法可以访问。
  */
 private[spark] class ParentClassLoader(parent: ClassLoader) extends ClassLoader(parent) {
 

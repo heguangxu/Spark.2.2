@@ -38,6 +38,10 @@ import org.apache.spark.util.{ParentClassLoader, Utils}
  * Allows the user to specify if user class path should be first.
  * This class loader delegates getting/finding resources to parent loader,
  * which makes sense until REPL never provide resource dynamically.
+  *
+  * 从Hadoop文件系统或HTTP URI读取类的类加载器，用于在使用REPL时由解释器定义的类。
+  * 允许用户指定用户类路径是否应该优先。这个类装入器委托给父加载器找到资源，这是有意义的，
+  * 直到REPL从不动态地提供资源。
  */
 class ExecutorClassLoader(
     conf: SparkConf,
@@ -48,9 +52,11 @@ class ExecutorClassLoader(
   val uri = new URI(classUri)
   val directory = uri.getPath
 
+  //  类装入器，在类加载器中使一些受保护的方法可以访问。
   val parentLoader = new ParentClassLoader(parent)
 
   // Allows HTTP connect and read timeouts to be controlled for testing / debugging purposes
+  // 允许HTTP连接和读取超时控制以进行测试/调试。
   private[repl] var httpUrlConnectionTimeoutMillis: Int = -1
 
   private val fetchFn: (String) => InputStream = uri.getScheme() match {
@@ -86,6 +92,11 @@ class ExecutorClassLoader(
     }
   }
 
+  /**
+    * 从SparkRPC获取类文件输入流
+    * @param path
+    * @return
+    */
   private def getClassFileInputStreamFromSparkRPC(path: String): InputStream = {
     val channel = env.rpcEnv.openChannel(s"$classUri/$path")
     new FilterInputStream(Channels.newInputStream(channel)) {
@@ -214,6 +225,7 @@ class ExecutorClassLoader(
 
   /**
    * URL-encode a string, preserving only slashes
+    * url编码字符串，只保留斜线。
    */
   def urlEncode(str: String): String = {
     str.split('/').map(part => URLEncoder.encode(part, "UTF-8")).mkString("/")

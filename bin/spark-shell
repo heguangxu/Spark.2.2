@@ -43,7 +43,10 @@ export _SPARK_CMD_USAGE="Usage: ./bin/spark-shell [options]"
 # do this specifically for the Spark shell because the scala REPL
 # has its own class loader, and any additional classpath specified
 # through spark.driver.extraClassPath is not automatically propagated.
+
 SPARK_SUBMIT_OPTS="$SPARK_SUBMIT_OPTS -Dscala.usejavacp=true"
+# 修改为：
+#     SPARK_SUBMIT_OPTS="$SPARK_SUBMIT_OPTS -Dscala.usejavacp=true -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=10207 -Dcom.sun.management.jmxremote.authenticate=false  -Dcom.sun.management.jmxremote.ssl=false"
 
 function main() {
   if $cygwin; then
@@ -54,6 +57,7 @@ function main() {
     # (see https://github.com/sbt/sbt/issues/562).
     stty -icanon min 1 -echo > /dev/null 2>&1
     export SPARK_SUBMIT_OPTS="$SPARK_SUBMIT_OPTS -Djline.terminal=unix"
+    # 这里执行了spark-submit脚本
     "${SPARK_HOME}"/bin/spark-submit --class org.apache.spark.repl.Main --name "Spark shell" "$@"
     stty icanon echo > /dev/null 2>&1
   else

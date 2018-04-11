@@ -27,6 +27,7 @@ import scala.util.Properties.{javaVersion, javaVmName, versionString}
 
 /**
  *  A Spark-specific interactive shell.
+  *  Spark-specific交互式shell。
  */
 class SparkILoop(in0: Option[BufferedReader], out: JPrintWriter)
     extends ILoop(in0, out) {
@@ -35,6 +36,19 @@ class SparkILoop(in0: Option[BufferedReader], out: JPrintWriter)
 
   def initializeSpark() {
     intp.beQuietDuring {
+      // initializeSpark向交互式shell发送一大串代码，Scala的交互shell将调用org.apache.spark.repl.Main的
+      // createSparkSession方法创建Spark-Session。我们看到常量spark将持有SparkSession的引用，并且sc持有
+      // SparkSession内部初始化好的SparkContext.所以我们才能在spark-shell的交互式shell中使用sc和spark.
+      /**
+        * val spark = if (org.apache.spark.repl.Main.sparkSession != null) {
+        *            org.apache.spark.repl.Main.sparkSession
+        *   } else {
+        *             org.apache.spark.repl.Main.createSparkSession()
+        *  }
+        *
+        *  这里开始org.apache.spark.repl.Main.sparkSession为null，所以调用org.apache.spark.repl.Main.createSparkSession()
+        *  否则重用这个org.apache.spark.repl.Main.sparkSession
+        */
       processLine("""
         @transient val spark = if (org.apache.spark.repl.Main.sparkSession != null) {
             org.apache.spark.repl.Main.sparkSession
@@ -93,8 +107,16 @@ class SparkILoop(in0: Option[BufferedReader], out: JPrintWriter)
    * We override `loadFiles` because we need to initialize Spark *before* the REPL
    * sees any files, so that the Spark context is visible in those files. This is a bit of a
    * hack, but there isn't another hook available to us at this point.
+    *
+    *
+    *
+    *
+    * lLoop的process滴啊用了loadFiles方法，而，SparkLoop继承了lloop并且重写了loadFiles（）方法
    */
   override def loadFiles(settings: Settings): Unit = {
+    /**
+      * 这里调用了SparkLoop的初始化方法
+      */
     initializeSpark()
     super.loadFiles(settings)
   }

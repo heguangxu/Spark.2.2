@@ -3104,7 +3104,10 @@ object SparkContext extends Logging {
     }
   }
 
-  /** Return the current active [[SparkContext]] if any. */
+  /** Return the current active [[SparkContext]] if any.
+    * 如果有的话，返回当前的活动[[SparkContext]]。
+    *
+    * */
   private[spark] def getActive: Option[SparkContext] = {
     SPARK_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
       Option(activeContext.get())

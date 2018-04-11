@@ -30,7 +30,9 @@ import org.apache.spark.util.Utils
 
 object Main extends Logging {
 
+  // 初始化日志
   initializeLogIfNecessary(true)
+  // z注册一个信号事件：当我们按下ctrl+c键的时候，会调用对应的信号处理程序，先获取活动的SparkContext，然后取消全部的job
   Signaling.cancelOnInterrupt()
 
   val conf = new SparkConf()
@@ -39,7 +41,7 @@ object Main extends Logging {
 
   var sparkContext: SparkContext = _
   var sparkSession: SparkSession = _
-  // this is a public var because tests reset it.
+  // this is a public var because tests reset it. 这是一个公共var，因为测试会重置它。
   var interp: SparkILoop = _
 
   private var hasErrors = false
@@ -49,11 +51,16 @@ object Main extends Logging {
     Console.err.println(msg)
   }
 
+  /**
+    * main方法
+    * @param args
+    */
   def main(args: Array[String]) {
+    // 这里先new  SparkILoop，然后才是调用doMain（）
     doMain(args, new SparkILoop)
   }
 
-  // Visible for testing
+  // Visible for testing 可见测试
   private[repl] def doMain(args: Array[String], _interp: SparkILoop): Unit = {
     interp = _interp
     val jars = Utils.getUserJars(conf, isShell = true).mkString(File.pathSeparator)
@@ -64,9 +71,12 @@ object Main extends Logging {
     ) ++ args.toList
 
     val settings = new GenericRunnerSettings(scalaOptionError)
+    // 一个可变对象设置。
     settings.processArguments(interpArguments, true)
 
+    // 默认为false，这里为true
     if (!hasErrors) {
+      /**  这里调用lLoop的process() --> SparkILoop.loadFiles --> SparkILoop.initializeSpark() */
       interp.process(settings) // Repl starts and goes in loop of R.E.P.L
       Option(sparkContext).foreach(_.stop)
     }
@@ -80,6 +90,10 @@ object Main extends Logging {
     // use. This is sort of ugly but since executors are started as part of SparkContext
     // initialization in certain cases, there's an initialization order issue that prevents
     // this from being set after SparkContext is instantiated.
+
+    // SparkContext将检测此配置并将其注册到RpcEnv的文件服务器上，设置setting spark.repl.class.uri
+    // 的实际uri供执行程序使用。这有点不太好，但是因为在某些情况下，executor是SparkContext
+    // 初始化的一部分，所以在SparkContext被实例化之后，有一个初始化顺序问题阻止了它的设置。
     conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath())
     if (execUri != null) {
       conf.set("spark.executor.uri", execUri)
@@ -90,15 +104,20 @@ object Main extends Logging {
 
     val builder = SparkSession.builder.config(conf)
     if (conf.get(CATALOG_IMPLEMENTATION.key, "hive").toLowerCase(Locale.ROOT) == "hive") {
+      // 如果hive的类能够加载就返回true，否则返回false
       if (SparkSession.hiveClassesArePresent) {
         // In the case that the property is not set at all, builder's config
         // does not have this value set to 'hive' yet. The original default
         // behavior is that when there are hive classes, we use hive catalog.
+
+        // 在没有设置属性的情况下，构建器的配置没有将这个值设置为“hive”。原始的默认行为是，
+        // 当有hive类时，我们使用hive catalog。
         sparkSession = builder.enableHiveSupport().getOrCreate()
         logInfo("Created Spark session with Hive support")
       } else {
         // Need to change it back to 'in-memory' if no hive classes are found
         // in the case that the property is set to hive in spark-defaults.conf
+        // 如果没有发现在spark-default .conf中属性设置为hive的情况，则需要将其更改为“内存”。
         builder.config(CATALOG_IMPLEMENTATION.key, "in-memory")
         sparkSession = builder.getOrCreate()
         logInfo("Created Spark session")
@@ -106,6 +125,7 @@ object Main extends Logging {
     } else {
       // In the case that the property is set but not to 'hive', the internal
       // default is 'in-memory'. So the sparkSession will use in-memory catalog.
+      // 在属性设置而不是“hive”的情况下，内部默认为“内存中”。因此，sparkSession将使用内存目录。
       sparkSession = builder.getOrCreate()
       logInfo("Created Spark session")
     }

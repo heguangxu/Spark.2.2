@@ -23,7 +23,7 @@ fi
 
 . "${SPARK_HOME}"/bin/load-spark-env.sh
 
-# Find the java binary
+# Find the java binary  这一段，主要是寻找java命令
 if [ -n "${JAVA_HOME}" ]; then
   RUNNER="${JAVA_HOME}/bin/java"
 else
@@ -35,7 +35,7 @@ else
   fi
 fi
 
-# Find Spark jars.
+# Find Spark jars.   寻找spark的jar包 这里如果我们的jar包数量多，而且内容大，可以事先放到每个机器的对应目录下，这里是一个优化点
 if [ -d "${SPARK_HOME}/jars" ]; then
   SPARK_JARS_DIR="${SPARK_HOME}/jars"
 else
@@ -64,15 +64,19 @@ fi
 # The launcher library will print arguments separated by a NULL character, to allow arguments with
 # characters that would be otherwise interpreted by the shell. Read that in a while loop, populating
 # an array that will be used to exec the final command.
+# 启动程序库将打印由NULL字符分隔的参数，以允许与shell进行其他解释的字符进行参数。在while循环中读取它，填充将用于执行最终命令的数组。
 #
 # The exit code of the launcher is appended to the output, so the parent shell removes it from the
 # command array and checks the value to see if the launcher succeeded.
+# 启动程序的退出代码被追加到输出，因此父shell从命令数组中删除它，并检查其值，看看启动器是否成功。
+# 这里spark启动了以SparkSubmit为主类的JVM进程。
 build_command() {
   "$RUNNER" -Xmx128m -cp "$LAUNCH_CLASSPATH" org.apache.spark.launcher.Main "$@"
   printf "%d\0" $?
 }
 
 # Turn off posix mode since it does not allow process substitution
+# 关闭posix模式，因为它不允许进程替换。
 set +o posix
 CMD=()
 while IFS= read -d '' -r ARG; do
@@ -86,6 +90,8 @@ LAUNCHER_EXIT_CODE=${CMD[$LAST]}
 # Certain JVM failures result in errors being printed to stdout (instead of stderr), which causes
 # the code that parses the output of the launcher to get confused. In those cases, check if the
 # exit code is an integer, and if it's not, handle it as a special error case.
+# 某些JVM失败会导致错误被打印到stdout(而不是stderr)，这会导致解析启动程序输出的代码变得混乱。
+# 在这些情况下，检查退出代码是否为整数，如果不是，将其作为特殊的错误处理。
 if ! [[ $LAUNCHER_EXIT_CODE =~ ^[0-9]+$ ]]; then
   echo "${CMD[@]}" | head -n-1 1>&2
   exit 1

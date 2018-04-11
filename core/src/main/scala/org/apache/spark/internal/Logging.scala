@@ -34,9 +34,9 @@ trait Logging {
   // be serialized and used on another machine
   @transient private var log_ : Logger = null
 
-  // Method to get the logger name for this object
+  // Method to get the logger name for this object 方法获取该对象的记录器名称。
   protected def logName = {
-    // Ignore trailing $'s in the class names for Scala objects
+    // Ignore trailing $'s in the class names for Scala objects 在Scala对象的类名中忽略尾随$'s。
     this.getClass.getName.stripSuffix("$")
   }
 
@@ -96,22 +96,33 @@ trait Logging {
   }
 
   protected def initializeLogIfNecessary(isInterpreter: Boolean): Unit = {
+    // initialized默认为false，这里为true
     if (!Logging.initialized) {
       Logging.initLock.synchronized {
+        // initialized默认为false，这里为true
         if (!Logging.initialized) {
+          // 默认isInterpreter为true
           initializeLogging(isInterpreter)
         }
       }
     }
   }
 
+  /**
+    * 初始化日志
+    * @param isInterpreter
+    */
   private def initializeLogging(isInterpreter: Boolean): Unit = {
     // Don't use a logger in here, as this is itself occurring during initialization of a logger
     // If Log4j 1.2 is being used, but is not initialized, load a default properties file
+    // 在这里不要使用logger，因为如果Log4j 1.2被使用，但是没有初始化，加载一个默认属性文件，就会发生这种情况。
     val binderClass = StaticLoggerBinder.getSingleton.getLoggerFactoryClassStr
     // This distinguishes the log4j 1.2 binding, currently
     // org.slf4j.impl.Log4jLoggerFactory, from the log4j 2.0 binding, currently
     // org.apache.logging.slf4j.Log4jLoggerFactory
+
+    // 这区分了log4j 1.2绑定，目前是org.slf4j.impl。log4j 2.0绑定的Log4jLoggerFactory，
+    // 当前org.apache.logging.slf4j.Log4jLoggerFactory。
     val usingLog4j12 = "org.slf4j.impl.Log4jLoggerFactory".equals(binderClass)
     if (usingLog4j12) {
       val log4j12Initialized = LogManager.getRootLogger.getAllAppenders.hasMoreElements
@@ -131,8 +142,10 @@ trait Logging {
       if (isInterpreter) {
         // Use the repl's main class to define the default log level when running the shell,
         // overriding the root logger's config if they're different.
+        // 使用repl的主类来定义运行shell时的默认日志级别，如果它们不同，则重写根日志记录器的配置。
         val rootLogger = LogManager.getRootLogger()
         val replLogger = LogManager.getLogger(logName)
+        // 日志级别默认为warn
         val replLevel = Option(replLogger.getLevel()).getOrElse(Level.WARN)
         if (replLevel != rootLogger.getEffectiveLevel()) {
           System.err.printf("Setting default log level to \"%s\".\n", replLevel)
